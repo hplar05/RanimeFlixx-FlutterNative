@@ -25,7 +25,7 @@ class _HomescreenState extends State<Homescreen> {
         title = data['title'];
         image = data['image'];
         genres = data['genres'];
-        isLoading = false; // Data fetched, set isLoading to false
+        isLoading = false; // Set isLoading to false after data is fetched
       });
     } catch (error) {
       throw Exception(error.toString());
@@ -53,33 +53,34 @@ class _HomescreenState extends State<Homescreen> {
                   width: 0,
                 ),
               ),
-              child: isLoading
-                  ? Container(
-                      width: 50,
-                      height: 50,
-                      child: CircularProgressIndicator(),
-                    )
-                  : Image.network(
-                      image,
-                      fit: BoxFit.cover,
-                    ),
-            ),
-            Positioned(
-              bottom: 50,
-              left: 10,
-              child: Text(
-                '$title',
-                style: TextStyle(fontSize: 50, color: Colors.white, fontWeight: FontWeight.bold),
+              child: Image.network(
+                image,
+                fit: BoxFit.cover,
               ),
             ),
-            Positioned(
-              bottom: 10,
-              right: 85,
-              child: Text(
-                '${genres.join(", ")}',
-                style: TextStyle(fontSize: 20, color: Colors.white),
+            if (isLoading) // Show CircularProgressIndicator when isLoading is true
+              CircularProgressIndicator(),
+            if (!isLoading) // Show data when isLoading is false
+              Positioned(
+                bottom: 50,
+                left: 10,
+                child: Text(
+                  '$title',
+                  style: const TextStyle(
+                      fontSize: 50,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold),
+                ),
               ),
-            ),
+            if (!isLoading) // Show data when isLoading is false
+              Positioned(
+                bottom: 10,
+                right: 85,
+                child: Text(
+                  '${genres.join(", ")}',
+                  style: const TextStyle(fontSize: 20, color: Colors.white),
+                ),
+              ),
           ],
         ),
       ],

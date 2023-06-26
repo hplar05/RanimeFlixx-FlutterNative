@@ -27,7 +27,7 @@ class _NavpagesState extends State<Navpages> {
   final List<Widget> _screens = [
     Homescreen(),
     const SearchVideo(),
-    const AnimeLibrary(),
+     AnimeLibrary(),
     const Profilepage(),
   ];
 

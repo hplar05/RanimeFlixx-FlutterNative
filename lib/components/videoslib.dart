@@ -1,124 +1,139 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 
-class AnimeLibrary extends StatefulWidget {
-  const AnimeLibrary({Key? key});
 
+class AnimeLibrary extends StatefulWidget {
   @override
   _AnimeLibraryState createState() => _AnimeLibraryState();
 }
 
 class _AnimeLibraryState extends State<AnimeLibrary> {
-  Future<List<Map<String, dynamic>>> fetchData() async {
-    const url = 'https://api.consumet.org/anime/gogoanime/top-airing';
+  List<dynamic> jsonList = [];
+  int currentPage = 1;
+  bool isLoading = false;
 
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
+
+  void getData() async {
     try {
-      final dio = Dio();
-      final response = await dio.get(url, queryParameters: {'page': 2});
-      final results = response.data['results'];
+      if (isLoading) return; // Prevent multiple requests while loading
 
-      final List<Map<String, dynamic>> animeList = results
-          .map<Map<String, dynamic>>((anime) => {
-                'id': anime['id'],
-                'title': anime['title'],
-                'images': anime['images'],
-                'url': anime['url'],
-                'genres': anime['genres'],
-              })
-          .toList();
+      setState(() {
+        isLoading = true;
+      });
 
-      return animeList;
+      var dio = Dio();
+      var response = await dio.get(
+        'https://api.consumet.org/anime/gogoanime/top-airing',
+        queryParameters: {'page': currentPage},
+      );
+
+      if (response.statusCode == 200) {
+        setState(() {
+          jsonList.addAll(response.data['results'] as List<dynamic>);
+          currentPage++;
+          isLoading = false;
+        });
+      } else {
+        print(response.statusCode);
+      }
     } catch (e) {
-      throw Exception('Error: ${e.toString()}');
+      print(e);
     }
   }
 
-  void navigateToAnimeSelected(String animeId) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => Animeselected(animeId: animeId),
-      ),
-    );
+  void showDetails(int index) async {
+    final id = jsonList[index]['id'] as String;
+    final url = 'https://api.consumet.org/anime/gogoanime/info/$id';
+
+    try {
+      var dio = Dio();
+      var response = await dio.get(url);
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                AnimeDetailScreen(animeId: jsonList[index]['id']),
+          ),
+        );
+      } else {
+        print(response.statusCode);
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: FutureBuilder<List<Map<String, dynamic>>>(
-        future: fetchData(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator();
-          } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          } else {
-            final animeList = snapshot.data;
-            return ListView.builder(
-              itemCount: animeList?.length,
-              itemBuilder: (context, index) {
-                final anime = animeList?[index];
-                if (anime == null) {
-                  return SizedBox(); // Return an empty SizedBox if anime is null
-                }
-                final title = anime['title'];
-                final genres = anime['genres'];
-                final images = anime['images'];
-                final mainImage = images?['main'];
+    return Scaffold(
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemBuilder: (BuildContext context, int index) {
+                final image = jsonList[index]['image'] as String?;
+                final title = jsonList[index]['title'] as String?;
+                final description = jsonList[index]['description'] as String?;
 
-                return ListTile(
-                  title: Text(title ?? 'Unknown Title'),
-                  subtitle: Text(genres?.join(', ') ?? 'Unknown Genres'),
-                  leading:
-                      mainImage != null ? Image.network(mainImage) : SizedBox(),
-                  onTap: () {
-                    final animeId = anime['id'];
-                    navigateToAnimeSelected(animeId);
-                  },
+                return Card(
+                  child: ListTile(
+                    onTap: () => showDetails(index),
+                    leading: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: image != null
+                          ? Image.network(
+                              image,
+                              fit: BoxFit.fill,
+                              width: 70,
+                              height: 100,
+                            )
+                          : Container(),
+                    ),
+                    title: Text(title ?? ''),
+                    subtitle: Text(description ?? ''),
+                  ),
                 );
               },
-            );
-          }
-        },
+              itemCount: jsonList.length,
+            ),
+          ),
+          isLoading
+              ? CircularProgressIndicator() // Show a loading indicator while fetching data
+              : ElevatedButton(
+                  onPressed: getData,
+                  child: Text('Load More'),
+                ),
+        ],
       ),
     );
   }
 }
 
-class Animeselected extends StatefulWidget {
+
+
+
+class AnimeDetailScreen extends StatefulWidget {
   final String animeId;
 
-  const Animeselected({Key? key, required this.animeId});
+  AnimeDetailScreen({required this.animeId});
 
   @override
-  _AnimeselectedState createState() => _AnimeselectedState();
+  _AnimeDetailScreenState createState() => _AnimeDetailScreenState();
 }
 
-class _AnimeselectedState extends State<Animeselected> {
-  String id = '';
-  String title = '';
-  String image = '';
-  List<dynamic> genres = [];
+class _AnimeDetailScreenState extends State<AnimeDetailScreen> {
+  late dynamic animeData;
+  List<dynamic> episodes = [];
   bool isLoading = true;
-
-  void fetchData() async {
-    try {
-      final url = 'https://api.consumet.org/anime/gogoanime/info/${widget.animeId}';
-      final dio = Dio();
-      final response = await dio.get(url);
-      final data = response.data;
-
-      setState(() {
-        id = data['id'].toString();
-        title = data['title'];
-        image = data['image'];
-        genres = data['genres'];
-        isLoading = false; // Data fetched, set isLoading to false
-      });
-    } catch (error) {
-      throw Exception(error.toString());
-    }
-  }
 
   @override
   void initState() {
@@ -126,56 +141,79 @@ class _AnimeselectedState extends State<Animeselected> {
     fetchData();
   }
 
+  void fetchData() async {
+    try {
+      var dio = Dio();
+      var url = "https://api.consumet.org/anime/gogoanime/info/${widget.animeId}";
+      var response = await dio.get(url);
+
+      if (response.statusCode == 200) {
+        setState(() {
+          animeData = response.data;
+          episodes = animeData['episodes'] ?? [];
+          isLoading = false;
+        });
+      } else {
+        print(response.statusCode);
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Stack(
-            alignment: Alignment.center,
-            children: <Widget>[
-              Container(
-                color: Colors.white,
-                child: isLoading
-                    ? SizedBox(
-                        width: 200,
-                        height: 200,
-                        child: CircularProgressIndicator(), // Circular indicator
-                      )
-                    : Image.network(
-                        image,
-                        fit: BoxFit.cover,
-                        height: 500, // Adjust the height as desired
-                        width: double.infinity, // Set the width to fill the container
-                      ),
-              ),
-              Positioned(
-                bottom: 40,
-                left: 10,
-                child: Text(
-                  ' $title',
-                  style: const TextStyle(
-                      fontSize: 30,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold),
-                ),
-              ),
-              Positioned(
-                bottom: 10,
-                right: 200,
-                child: Text(
-                  ' ${genres.join(", ")}',
-                  style: const TextStyle(
-                    fontSize: 20,
-                    color: Color.fromARGB(255, 0, 0, 0),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Anime Details'),
+      ),
+      body: isLoading
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ClipRRect(
+                    
+                    child: Image.network(
+                      animeData['image'] ?? '',
+                      fit: BoxFit.fill,
+                      width: 700,
+                      height: 300,
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
-        ],
-      ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    animeData['title'] ?? '',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(animeData['description'] ?? ''),
+                ),
+                Expanded(
+                  child: ListView.builder(
+                    itemBuilder: (BuildContext context, int index) {
+                      final episode = episodes[index];
+
+                      return ListTile(
+                        title: Text('Episode ${episode['number'] ?? ''}'),
+                        subtitle: Text(episode['title'] ?? ''),
+                      );
+                    },
+                    itemCount: episodes.length,
+                  ),
+                ),
+              ],
+            ),
     );
   }
 }
