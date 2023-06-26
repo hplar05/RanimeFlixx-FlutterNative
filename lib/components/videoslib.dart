@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 
@@ -193,8 +195,7 @@ class _AnimeDetailScreenState extends State<AnimeDetailScreen> {
   void fetchData() async {
     try {
       var dio = Dio();
-      var url =
-          "https://api.consumet.org/anime/gogoanime/info/${widget.animeId}";
+      var url = "https://api.consumet.org/anime/gogoanime/info/${widget.animeId}";
       var response = await dio.get(url);
 
       if (response.statusCode == 200) {
@@ -204,15 +205,16 @@ class _AnimeDetailScreenState extends State<AnimeDetailScreen> {
           isLoading = false;
         });
       } else {
-        print(response.statusCode);
+        print('Failed to fetch anime details. Status code: ${response.statusCode}');
       }
     } catch (e) {
-      print(e);
+      print('Error while fetching anime details: $e');
     }
   }
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 49, 50, 53),
       body: isLoading

@@ -1,4 +1,5 @@
-import 'package:anime_app/components/homescreen.dart';
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -181,7 +182,7 @@ class _ProfilepageState extends State<Profilepage> {
   Widget buildAbout() => Column(
         children: <Widget>[
           const SizedBox(
-            height: 50,
+            height: 25,
           ),
           const Align(
             alignment: Alignment.centerLeft,
@@ -212,9 +213,10 @@ class _ProfilepageState extends State<Profilepage> {
           ),
           Align(
             alignment: Alignment.center,
+            // ignore: avoid_unnecessary_containers
             child: Container(
               child: const Text(
-                " As a passionate BSIT student, I constantly \nseek to expand my knowledge in the dynamic fields of mobile and web development, fueled by the joy of discovering new possibilities.",
+                " As a passionate BSIT student, I constantly seek to expand my knowledge in the dynamic fields of mobile and web development, fueled by the joy of discovering new possibilities.",
                 style: TextStyle(fontSize: 20),
               ),
             ),

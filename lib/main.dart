@@ -1,5 +1,4 @@
 import 'package:anime_app/components/loadingscreen/splash_screen.dart';
-import 'package:anime_app/components/navpage.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -19,7 +18,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home:  SplashScreen(),
+      home:  const SplashScreen(),
     );
   }
 }
