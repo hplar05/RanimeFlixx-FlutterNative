@@ -119,7 +119,7 @@ class _ProfilepageState extends State<Profilepage> {
   Widget buildCoverImage() => Container(
         color: Colors.grey,
         child: Image.asset(
-          'lib/images/profilec.jpg',
+          'lib/images/loadimg.png',
           width: double.infinity,
           height: coverHeight,
           fit: BoxFit.cover,
@@ -129,7 +129,7 @@ class _ProfilepageState extends State<Profilepage> {
   Widget buildProfileImage() => CircleAvatar(
         radius: profileHeight / 2,
         backgroundColor: Colors.grey.shade800,
-        backgroundImage: const AssetImage("lib/images/profile.jpg"),
+        backgroundImage: const AssetImage("lib/images/profile2.jpg"),
       );
 
   Widget buildContent() => Column(
@@ -138,7 +138,7 @@ class _ProfilepageState extends State<Profilepage> {
             height: 8,
           ),
           const Text(
-            'Hplar Onidalas',
+            'Ralph Saladino',
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 30,
@@ -156,10 +156,7 @@ class _ProfilepageState extends State<Profilepage> {
             ),
           ),
           const SizedBox(
-            height: 5,
-          ),
-          const SizedBox(
-            height: 20,
+            height: 0,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -217,7 +214,7 @@ class _ProfilepageState extends State<Profilepage> {
             alignment: Alignment.center,
             child: Container(
               child: const Text(
-                "As a passionate BSIT student, I constantly \nseek to expand my knowledge in the dynamic fields of mobile and web development, fueled by the joy of discovering new possibilities.",
+                " As a passionate BSIT student, I constantly \nseek to expand my knowledge in the dynamic fields of mobile and web development, fueled by the joy of discovering new possibilities.",
                 style: TextStyle(fontSize: 20),
               ),
             ),
