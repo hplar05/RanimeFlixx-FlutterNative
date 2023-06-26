@@ -1,6 +1,6 @@
 import 'package:anime_app/components/homescreen.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter/services.dart';
 
 class Profilepage extends StatefulWidget {
   const Profilepage({super.key});
@@ -16,76 +16,71 @@ class _ProfilepageState extends State<Profilepage> {
   void logout() {
     // Call clearProfile() when logging out
 
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text(
-            'Logout',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 24,
-              color: Colors.black,
-            ),
-          ),
-          content: const SizedBox(
-            height: 35,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  'Are you sure you want to logout?',
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.grey,
-                  ),
-                ),
-                SizedBox(height: 10),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text(
-                'Cancel',
-                style: TextStyle(
-                  fontSize: 18,
-                  color: Colors.blue,
-                ),
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ),
-              ),
-              onPressed: () {
-                // Perform logout action here
-                // Clear user session data
-                // Redirect user to login page
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => Homescreen()),
-                );
-              },
-              child: const Text(
-                'Logout',
-                style: TextStyle(
-                  fontSize: 18,
-                  color: Colors.white,
-                ),
+showDialog(
+  context: context,
+  builder: (BuildContext context) {
+    return AlertDialog(
+      title: const Text(
+        'Exit the App?',
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 24,
+          color: Colors.black,
+        ),
+      ),
+      content: const SizedBox(
+        height: 35,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              'Are you sure you want to exit the App??',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey,
               ),
             ),
+            SizedBox(height: 5),
           ],
-        );
-      },
+        ),
+      ),
+      actions: <Widget>[
+        TextButton(
+          child: const Text(
+            'Cancel',
+            style: TextStyle(
+              fontSize: 18,
+              color: Colors.blue,
+            ),
+          ),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.red,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30),
+            ),
+          ),
+          onPressed: () {
+            // Exit the app
+            SystemNavigator.pop();
+          },
+          child: const Text(
+            'Exit',
+            style: TextStyle(
+              fontSize: 18,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ],
     );
+  },
+);
   }
 
   @override

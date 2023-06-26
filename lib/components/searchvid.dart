@@ -23,7 +23,7 @@ class _SearchVideoState extends State<SearchVideo> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Stateful Widget Template'),
+        title: Text('Wala pang laman'),
       ),
       body: Center(
         child: Column(

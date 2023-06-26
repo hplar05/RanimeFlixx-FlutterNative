@@ -1,6 +1,7 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
-
 
 class AnimeLibrary extends StatefulWidget {
   @override
@@ -57,6 +58,7 @@ class _AnimeLibraryState extends State<AnimeLibrary> {
       if (response.statusCode == 200) {
         final data = response.data;
 
+        // ignore: use_build_context_synchronously
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -68,6 +70,7 @@ class _AnimeLibraryState extends State<AnimeLibrary> {
         print(response.statusCode);
       }
     } catch (e) {
+      // ignore: avoid_print
       print(e);
     }
   }
@@ -79,6 +82,8 @@ class _AnimeLibraryState extends State<AnimeLibrary> {
         children: [
           Expanded(
             child: ListView.builder(
+              shrinkWrap: true,
+              physics: const BouncingScrollPhysics(),
               itemBuilder: (BuildContext context, int index) {
                 final image = jsonList[index]['image'] as String?;
                 final title = jsonList[index]['title'] as String?;
@@ -107,10 +112,16 @@ class _AnimeLibraryState extends State<AnimeLibrary> {
             ),
           ),
           isLoading
-              ? CircularProgressIndicator() // Show a loading indicator while fetching data
+              ? const CircularProgressIndicator() // Show a loading indicator while fetching data
               : ElevatedButton(
                   onPressed: getData,
-                  child: Text('Load More'),
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<
+                        Color>(const Color
+                            .fromARGB(255, 1, 19,
+                        34)), // Replace 'Colors.blue' with your desired color
+                  ),
+                  child: const Text('Load More'),
                 ),
         ],
       ),
@@ -118,13 +129,10 @@ class _AnimeLibraryState extends State<AnimeLibrary> {
   }
 }
 
-
-
-
 class AnimeDetailScreen extends StatefulWidget {
   final String animeId;
 
-  AnimeDetailScreen({required this.animeId});
+  const AnimeDetailScreen({super.key, required this.animeId});
 
   @override
   _AnimeDetailScreenState createState() => _AnimeDetailScreenState();
@@ -144,7 +152,8 @@ class _AnimeDetailScreenState extends State<AnimeDetailScreen> {
   void fetchData() async {
     try {
       var dio = Dio();
-      var url = "https://api.consumet.org/anime/gogoanime/info/${widget.animeId}";
+      var url =
+          "https://api.consumet.org/anime/gogoanime/info/${widget.animeId}";
       var response = await dio.get(url);
 
       if (response.statusCode == 200) {
@@ -165,42 +174,74 @@ class _AnimeDetailScreenState extends State<AnimeDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Anime Details'),
+        backgroundColor: const Color.fromARGB(255, 49, 50, 53),
+        automaticallyImplyLeading: false,
+        title: const Text('Anime Details'),
+        centerTitle: true,
       ),
       body: isLoading
-          ? Center(
+          ? const Center(
               child: CircularProgressIndicator(),
             )
           : Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ClipRRect(
-                    
-                    child: Image.network(
-                      animeData['image'] ?? '',
-                      fit: BoxFit.fill,
-                      width: 700,
-                      height: 300,
+                Stack(
+                  alignment: Alignment.bottomCenter,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(0.0),
+                      child: ClipRRect(
+                        child: Image.network(
+                          animeData['image'] ?? '',
+                          fit: BoxFit.fill,
+                          width: 500,
+                          height: 400,
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    animeData['title'] ?? '',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+                    Container(
+                      color: Colors.grey.withOpacity(0.5),
+                      child: Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Text(
+                              animeData['title'] ?? '',
+                              style: const TextStyle(
+                                fontSize: 30,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                            const SizedBox(height: 3),
+                            Text(
+                              (animeData['genres'] as List<dynamic>).join(
+                                  ', '), // Join the genre strings with a comma and space
+                              style: const TextStyle(
+                                fontSize: 18,
+                                color: Colors.white,
+                              ),
+                            ),
+                            const SizedBox(height: 3),
+                            Text(
+                              animeData['description'] ?? '',
+                              maxLines: 3,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(animeData['description'] ?? ''),
+                  ],
                 ),
                 Expanded(
                   child: ListView.builder(
+                    shrinkWrap: true,
+                    physics: const BouncingScrollPhysics(),
                     itemBuilder: (BuildContext context, int index) {
                       final episode = episodes[index];
 
