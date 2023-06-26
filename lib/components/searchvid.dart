@@ -23,19 +23,19 @@ class _SearchVideoState extends State<SearchVideo> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Wala pang laman'),
+        title: const Text('Wala pang laman'),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
+            const Text(
               'Counter:',
               style: TextStyle(fontSize: 20),
             ),
             Text(
               '$_counter',
-              style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
             ),
           ],
         ),
@@ -43,7 +43,7 @@ class _SearchVideoState extends State<SearchVideo> {
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
         tooltip: 'Increment',
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }
