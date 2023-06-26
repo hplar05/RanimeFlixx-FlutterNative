@@ -3,84 +3,82 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class Profilepage extends StatefulWidget {
-  const Profilepage({super.key});
+  const Profilepage({Key? key}) : super(key: key);
 
   @override
-  // ignore: library_private_types_in_public_api
   _ProfilepageState createState() => _ProfilepageState();
 }
 
 class _ProfilepageState extends State<Profilepage> {
   final double coverHeight = 280;
   final double profileHeight = 144;
-  void logout() {
-    // Call clearProfile() when logging out
 
-showDialog(
-  context: context,
-  builder: (BuildContext context) {
-    return AlertDialog(
-      title: const Text(
-        'Exit the App?',
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 24,
-          color: Colors.black,
-        ),
-      ),
-      content: const SizedBox(
-        height: 35,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              'Are you sure you want to exit the App??',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey,
+  void logout() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(
+            'Exit the App?',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 24,
+              color: Colors.black,
+            ),
+          ),
+          content: const SizedBox(
+            height: 35,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  'Are you sure you want to exit the App?',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey,
+                  ),
+                ),
+                SizedBox(height: 5),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text(
+                'Cancel',
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.blue,
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+              ),
+              onPressed: () {
+// Exit the app
+                SystemNavigator.pop();
+              },
+              child: const Text(
+                'Exit',
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.white,
+                ),
               ),
             ),
-            SizedBox(height: 5),
           ],
-        ),
-      ),
-      actions: <Widget>[
-        TextButton(
-          child: const Text(
-            'Cancel',
-            style: TextStyle(
-              fontSize: 18,
-              color: Colors.blue,
-            ),
-          ),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.red,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30),
-            ),
-          ),
-          onPressed: () {
-            // Exit the app
-            SystemNavigator.pop();
-          },
-          child: const Text(
-            'Exit',
-            style: TextStyle(
-              fontSize: 18,
-              color: Colors.white,
-            ),
-          ),
-        ),
-      ],
+        );
+      },
     );
-  },
-);
   }
 
   @override
@@ -102,7 +100,6 @@ showDialog(
   Widget buildTop() {
     final bottom = profileHeight / 2;
     final top = coverHeight - profileHeight / 2;
-
     return Stack(
       clipBehavior: Clip.none,
       alignment: Alignment.center,
@@ -129,7 +126,7 @@ showDialog(
         ),
       );
 
- Widget buildProfileImage() => CircleAvatar(
+  Widget buildProfileImage() => CircleAvatar(
         radius: profileHeight / 2,
         backgroundColor: Colors.grey.shade800,
         backgroundImage: const AssetImage("lib/images/profile.jpg"),
@@ -140,7 +137,7 @@ showDialog(
           const SizedBox(
             height: 8,
           ),
-      const Text(
+          const Text(
             'Hplar Onidalas',
             style: TextStyle(
               fontWeight: FontWeight.bold,
@@ -167,11 +164,11 @@ showDialog(
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              buildFacebookIcon(Icons.facebook_sharp),
+              buildSocialIcon(Icons.facebook_sharp),
               const SizedBox(
                 width: 5,
               ),
-              buildSettingsIcon(Icons.phone_callback),
+              buildSocialIcon(Icons.phone_callback),
               const SizedBox(
                 width: 5,
               ),
@@ -189,17 +186,14 @@ showDialog(
           const SizedBox(
             height: 50,
           ),
-          Align(
+          const Align(
             alignment: Alignment.centerLeft,
-            // ignore: avoid_unnecessary_containers
-            child: Container(
-              child: const Text(
-                " About",
-                style: TextStyle(
-                    fontSize: 25,
-                    fontWeight: FontWeight.bold,
-                    fontStyle: FontStyle.italic),
-              ),
+            child: Text(
+              "About",
+              style: TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                  fontStyle: FontStyle.italic),
             ),
           ),
           const SizedBox(height: 0),
@@ -221,7 +215,6 @@ showDialog(
           ),
           Align(
             alignment: Alignment.center,
-            // ignore: avoid_unnecessary_containers
             child: Container(
               child: const Text(
                 "As a passionate BSIT student, I constantly \nseek to expand my knowledge in the dynamic fields of mobile and web development, fueled by the joy of discovering new possibilities.",
@@ -232,42 +225,40 @@ showDialog(
         ],
       );
 
-  Widget buildFacebookIcon(IconData icon) => CircleAvatar(
-        radius: 23,
-        child: Material(
-          shape: const CircleBorder(),
-          clipBehavior: Clip.hardEdge,
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: () {},
-            child: Center(child: Icon(icon, size: 30)),
-          ),
+  Widget buildSocialIcon(IconData icon) => Container(
+        margin: const EdgeInsets.only(top: 10),
+        width: 40,
+        height: 40,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.grey.shade800,
         ),
-      );
-  Widget buildSettingsIcon(IconData icon) => CircleAvatar(
-        radius: 23,
-        child: Material(
-          shape: const CircleBorder(),
-          clipBehavior: Clip.hardEdge,
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: () {},
-            child: Center(child: Icon(icon, size: 30)),
+        child: IconButton(
+          onPressed: () {},
+          icon: Icon(
+            icon,
+            color: Colors.white,
+            size: 25,
           ),
         ),
       );
 
-  Widget buildLogoutIcon(IconData icon) => CircleAvatar(
-        radius: 23,
-        child: Material(
-          shape: const CircleBorder(),
-          clipBehavior: Clip.hardEdge,
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: () {
-              logout();
-            },
-            child: Center(child: Icon(icon, size: 30)),
+  Widget buildLogoutIcon(IconData icon) => Container(
+        margin: const EdgeInsets.only(top: 10),
+        width: 40,
+        height: 40,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.grey.shade800,
+        ),
+        child: IconButton(
+          onPressed: () {
+            logout();
+          },
+          icon: Icon(
+            icon,
+            color: Colors.white,
+            size: 25,
           ),
         ),
       );

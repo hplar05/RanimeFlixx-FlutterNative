@@ -1,9 +1,9 @@
-// ignore_for_file: library_private_types_in_public_api
-
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 
 class AnimeLibrary extends StatefulWidget {
+  const AnimeLibrary({Key? key}) : super(key: key);
+
   @override
   _AnimeLibraryState createState() => _AnimeLibraryState();
 }
@@ -12,11 +12,22 @@ class _AnimeLibraryState extends State<AnimeLibrary> {
   List<dynamic> jsonList = [];
   int currentPage = 1;
   bool isLoading = false;
+  ScrollController scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     getData();
+
+    // Add a scroll listener to the scrollController
+    scrollController.addListener(scrollListener);
+  }
+
+  @override
+  void dispose() {
+    // Dispose the scrollController to prevent memory leaks
+    scrollController.dispose();
+    super.dispose();
   }
 
   void getData() async {
@@ -67,11 +78,21 @@ class _AnimeLibraryState extends State<AnimeLibrary> {
           ),
         );
       } else {
+        // ignore: avoid_print
         print(response.statusCode);
       }
     } catch (e) {
       // ignore: avoid_print
       print(e);
+    }
+  }
+
+  void scrollListener() {
+    if (scrollController.position.pixels ==
+            scrollController.position.maxScrollExtent &&
+        !isLoading) {
+      // Reached the end of the list, load more data
+      getData();
     }
   }
 
@@ -82,6 +103,7 @@ class _AnimeLibraryState extends State<AnimeLibrary> {
         children: [
           Expanded(
             child: ListView.builder(
+              controller: scrollController, // Assign the scrollController to the ListView.builder
               shrinkWrap: true,
               physics: const BouncingScrollPhysics(),
               itemBuilder: (BuildContext context, int index) {
@@ -89,50 +111,69 @@ class _AnimeLibraryState extends State<AnimeLibrary> {
                 final title = jsonList[index]['title'] as String?;
                 final description = jsonList[index]['description'] as String?;
 
-                return Card(
-                  child: ListTile(
-                    onTap: () => showDetails(index),
-                    leading: ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: image != null
-                          ? Image.network(
-                              image,
-                              fit: BoxFit.fill,
-                              width: 70,
-                              height: 100,
-                            )
-                          : Container(),
+                return GestureDetector(
+                  onTap: () => showDetails(index),
+                  child: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: image != null
+                                ? Image.network(
+                                    image,
+                                    fit: BoxFit.cover,
+                                    width: 70,
+                                    height: 100,
+                                  )
+                                : Container(),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  title ?? '',
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  description ?? '',
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    title: Text(title ?? ''),
-                    subtitle: Text(description ?? ''),
                   ),
                 );
               },
               itemCount: jsonList.length,
             ),
           ),
-          isLoading
-              ? const CircularProgressIndicator() // Show a loading indicator while fetching data
-              : ElevatedButton(
-                  onPressed: getData,
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<
-                        Color>(const Color
-                            .fromARGB(255, 1, 19,
-                        34)), // Replace 'Colors.blue' with your desired color
-                  ),
-                  child: const Text('Load More'),
-                ),
         ],
       ),
     );
   }
 }
 
+
 class AnimeDetailScreen extends StatefulWidget {
   final String animeId;
 
-  const AnimeDetailScreen({super.key, required this.animeId});
+  const AnimeDetailScreen({Key? key, required this.animeId}) : super(key: key);
 
   @override
   _AnimeDetailScreenState createState() => _AnimeDetailScreenState();
@@ -173,12 +214,7 @@ class _AnimeDetailScreenState extends State<AnimeDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 49, 50, 53),
-        automaticallyImplyLeading: false,
-        title: const Text('Anime Details'),
-        centerTitle: true,
-      ),
+      backgroundColor: const Color.fromARGB(255, 49, 50, 53),
       body: isLoading
           ? const Center(
               child: CircularProgressIndicator(),
@@ -188,21 +224,25 @@ class _AnimeDetailScreenState extends State<AnimeDetailScreen> {
                 Stack(
                   alignment: Alignment.bottomCenter,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.all(0.0),
-                      child: ClipRRect(
-                        child: Image.network(
-                          animeData['image'] ?? '',
-                          fit: BoxFit.fill,
-                          width: 500,
-                          height: 400,
-                        ),
-                      ),
+                    Image.network(
+                      animeData['image'] ?? '',
+                      fit: BoxFit.fill,
+                      width: MediaQuery.of(context).size.width,
+                      height: 400,
                     ),
                     Container(
-                      color: Colors.grey.withOpacity(0.5),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.transparent,
+                            Colors.black.withOpacity(0.8),
+                          ],
+                        ),
+                      ),
                       child: Padding(
-                        padding: const EdgeInsets.all(15.0),
+                        padding: const EdgeInsets.all(12.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
@@ -215,12 +255,22 @@ class _AnimeDetailScreenState extends State<AnimeDetailScreen> {
                               ),
                             ),
                             const SizedBox(height: 3),
-                            Text(
-                              (animeData['genres'] as List<dynamic>).join(
-                                  ', '), // Join the genre strings with a comma and space
-                              style: const TextStyle(
-                                fontSize: 18,
-                                color: Colors.white,
+                            Positioned(
+                              bottom: 16,
+                              right: 16,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 4, horizontal: 8),
+                                decoration: BoxDecoration(
+                                  color: Colors.red,
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Text(
+                                  (animeData['genres'] as List<dynamic>)
+                                      .join(", "),
+                                  style: const TextStyle(
+                                      fontSize: 16, color: Colors.white),
+                                ),
                               ),
                             ),
                             const SizedBox(height: 3),
@@ -242,15 +292,65 @@ class _AnimeDetailScreenState extends State<AnimeDetailScreen> {
                   child: ListView.builder(
                     shrinkWrap: true,
                     physics: const BouncingScrollPhysics(),
+                    itemCount: episodes.length,
                     itemBuilder: (BuildContext context, int index) {
                       final episode = episodes[index];
 
-                      return ListTile(
-                        title: Text('Episode ${episode['number'] ?? ''}'),
-                        subtitle: Text(episode['title'] ?? ''),
+                      return Container(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 8.0,
+                          horizontal: 16.0,
+                        ),
+                        decoration: BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(
+                              color: Colors.grey.withOpacity(0.4),
+                              width: 1.0,
+                            ),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Episode ${episode['number'] ?? ''}',
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color.fromARGB(255, 255, 255, 255),
+                                  ),
+                                ),
+                                Text(
+                                  episode['title'] ?? '',
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            ElevatedButton(
+                              onPressed: () {
+                                // Add your desired functionality here
+                              },
+                              // ignore: sort_child_properties_last
+                              child: const Text('Watch'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    const Color.fromARGB(255, 160, 27, 27),
+                                textStyle: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       );
                     },
-                    itemCount: episodes.length,
                   ),
                 ),
               ],

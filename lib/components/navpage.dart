@@ -25,8 +25,8 @@ class _NavpagesState extends State<Navpages> {
   }
 
   final List<Widget> _screens = [
-    Homescreen(),
-    AnimeLibrary(),
+    const Homescreen(),
+    const AnimeLibrary(),
     const SearchVideo(),
     const Profilepage(),
   ];
@@ -50,7 +50,7 @@ class _NavpagesState extends State<Navpages> {
           unselectedItemColor: Colors.white,
           elevation: 0.0,
           items: [
-            BottomNavigationBarItem(
+        BottomNavigationBarItem(
               icon: Container(
                 padding: const EdgeInsets.symmetric(
                   vertical: 6.0,
@@ -64,7 +64,7 @@ class _NavpagesState extends State<Navpages> {
               ),
               label: '',
             ),
-            BottomNavigationBarItem(
+              BottomNavigationBarItem(
               icon: Container(
                 padding: const EdgeInsets.symmetric(
                   vertical: 6.0,
@@ -74,7 +74,7 @@ class _NavpagesState extends State<Navpages> {
                   color: _currentIndex == 1 ? Colors.blue : Colors.transparent,
                   borderRadius: BorderRadius.circular(20.0),
                 ),
-                child: const Icon(Icons.smart_display),
+                child: const Icon(Icons.movie_creation_outlined),
               ),
               label: '',
             ),
