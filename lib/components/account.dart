@@ -187,7 +187,7 @@ class _ProfilepageState extends State<Profilepage> {
           const Align(
             alignment: Alignment.centerLeft,
             child: Text(
-              "About",
+              "  Comment:",
               style: TextStyle(
                   fontSize: 25,
                   fontWeight: FontWeight.bold,
@@ -216,8 +216,8 @@ class _ProfilepageState extends State<Profilepage> {
             // ignore: avoid_unnecessary_containers
             child: Container(
               child: const Text(
-                " As a passionate BSIT student, I constantly seek to expand my knowledge in the dynamic fields of mobile and web development, fueled by the joy of discovering new possibilities.",
-                style: TextStyle(fontSize: 20),
+                "  Napagtripan lang gawin sana magusto nyo \n mga Bossing. Visit nyo nadin portfolio ko \n ehehe :) hplarplay.vercel.app Salamat <3",
+                style: TextStyle(fontSize: 21),
               ),
             ),
           ),

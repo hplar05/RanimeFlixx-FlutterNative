@@ -51,7 +51,7 @@ class _AnimeHomePageState extends State<AnimeHomePage> {
   }
 
   void _startAutoScroll() {
-    Timer.periodic(const Duration(seconds: 5), (Timer timer) {
+    Timer.periodic(const Duration(seconds: 3), (Timer timer) {
       if (_currentPageIndex < carouselImages.length - 1) {
         _currentPageIndex++;
       } else {
