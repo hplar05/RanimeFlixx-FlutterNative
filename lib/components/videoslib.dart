@@ -1,7 +1,6 @@
 // ignore_for_file: library_private_types_in_public_api
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 
 class AnimeLibrary extends StatefulWidget {
   const AnimeLibrary({Key? key}) : super(key: key);
@@ -32,56 +31,59 @@ class _AnimeLibraryState extends State<AnimeLibrary> {
     super.dispose();
   }
 
-void getData() async {
-  try {
-    if (isLoading) return; // Prevent multiple requests while loading
-
-    setState(() {
-      isLoading = true;
-    });
-
-    var url = Uri.parse('https://api.consumet.org/anime/gogoanime/top-airing?page=$currentPage');
-    var response = await http.get(url);
-
-    if (response.statusCode == 200) {
-      var responseData = json.decode(response.body);
-      print(responseData); // Print the response data
+  void getData() async {
+    try {
+      if (isLoading) return; // Prevent multiple requests while loading
 
       setState(() {
-        jsonList.addAll(responseData['results'] as List<dynamic>);
-        currentPage++;
-        isLoading = false;
+        isLoading = true;
       });
-    } else {
-      print(response.statusCode); // Print the status code if it's not 200
-    }
-  } catch (e) {
-    print(e);
-  }
-}
 
+      var dio = Dio();
+      var response = await dio.get(
+        'https://api.consumet.org/anime/gogoanime/top-airing',
+        queryParameters: {'page': currentPage},
+      );
+
+      if (response.statusCode == 200) {
+        setState(() {
+          jsonList.addAll(response.data['results'] as List<dynamic>);
+          currentPage++;
+          isLoading = false;
+        });
+      } else {
+        print(response.statusCode);
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
 
   void showDetails(int index) async {
     final id = jsonList[index]['id'] as String;
     final url = 'https://api.consumet.org/anime/gogoanime/info/$id';
 
     try {
-      var response = await http.get(Uri.parse(url));
+      var dio = Dio();
+      var response = await dio.get(url);
 
       if (response.statusCode == 200) {
-        final data = response.body;
+        final data = response.data;
 
+        // ignore: use_build_context_synchronously
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) =>
-                AnimeDetailScreen(animeId: id), // Pass the correct animeId
+                AnimeDetailScreen(animeId: jsonList[index]['id']),
           ),
         );
       } else {
+        // ignore: avoid_print
         print(response.statusCode);
       }
     } catch (e) {
+      // ignore: avoid_print
       print(e);
     }
   }
@@ -190,23 +192,26 @@ class _AnimeDetailScreenState extends State<AnimeDetailScreen> {
   }
 
   void fetchData() async {
-  try {
-    var url = Uri.parse("https://api.consumet.org/anime/gogoanime/info/${widget.animeId}");
-    var response = await http.get(url);
+    try {
+      var dio = Dio();
+      var url =
+          "https://api.consumet.org/anime/gogoanime/info/${widget.animeId}";
+      var response = await dio.get(url);
 
-    if (response.statusCode == 200) {
-      setState(() {
-        animeData = json.decode(response.body); // Parse the response body as JSON
-        episodes = animeData['episodes'] ?? [];
-        isLoading = false;
-      });
-    } else {
-      print('Failed to fetch anime details. Status code: ${response.statusCode}');
+      if (response.statusCode == 200) {
+        setState(() {
+          animeData = response.data;
+          episodes = animeData['episodes'] ?? [];
+          isLoading = false;
+        });
+      } else {
+        print(
+            'Failed to fetch anime details. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error while fetching anime details: $e');
     }
-  } catch (e) {
-    print('Error while fetching anime details: $e');
   }
-}
 
   @override
   Widget build(BuildContext context) {
