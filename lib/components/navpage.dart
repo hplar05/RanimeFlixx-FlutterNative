@@ -1,6 +1,5 @@
 import 'package:anime_app/components/account.dart';
 import 'package:anime_app/components/homescreen.dart';
-import 'package:anime_app/components/searchvid.dart';
 import 'package:anime_app/components/videoslib.dart';
 import 'package:flutter/material.dart';
 
