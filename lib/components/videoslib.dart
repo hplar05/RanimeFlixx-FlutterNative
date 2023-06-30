@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
 
-
 class AnimeLibrary extends StatefulWidget {
   const AnimeLibrary({Key? key}) : super(key: key);
 
@@ -80,126 +79,134 @@ class _AnimeLibraryState extends State<AnimeLibrary> {
     });
   }
 
-@override
-Widget build(BuildContext context) {
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
-  return Scaffold(
-    body: Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10.0),
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.5),
-                  spreadRadius: 2.0,
-                  blurRadius: 10.0,
-                  offset: const Offset(0.0, 3.0),
-                ),
-              ],
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                    child: TextField(
-                      controller: _searchController,
-                      decoration: InputDecoration(
-                        hintText: 'Search Anime',
-                        border: InputBorder.none,
-                      ),
-                    ),
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.search),
-                  onPressed: () {
-                    _searchAnime(_searchController.text);
-                  },
-                ),
-              ],
-            ),
-          ),
-        ),
-          Expanded(
-            child: GridView.builder(
-              controller: _scrollController,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 7.0,
-                mainAxisSpacing: 7.0,
-              ),
-              itemBuilder: (BuildContext context, int index) {
-                final image = jsonList[index]['image'] as String?;
-                final title = jsonList[index]['title'] as String?;
-                final description = jsonList[index]['description'] as String?;
-                final id = jsonList[index]['id'] as String?;
+  @override
+  Widget build(BuildContext context) {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
 
-                return GestureDetector(
-                  onTap: () {
-                    _handleAnimeTap(id);
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.5),
-                          spreadRadius: 2.0,
-                          blurRadius: 10.0,
-                          offset: const Offset(0.0, 3.0),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        ClipRRect(
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(10.0),
-                            topRight: Radius.circular(10.0),
-                          ),
-                          child: Image.network(
-                            image ?? '',
-                            fit: BoxFit.cover,
-                            height: 140,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(5.0),
-                          child: Text(
-                            title ?? '',
-                            style: const TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                          child: Text(
-                            description ?? '',
-                            style: const TextStyle(
-                              fontSize: 12,
-                            ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
+    return Scaffold(
+      body: Builder(
+        builder: (BuildContext context) {
+          return Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.0),
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 2.0,
+                        blurRadius: 10.0,
+                        offset: const Offset(0.0, 3.0),
+                      ),
+                    ],
                   ),
-                );
-              },
-              itemCount: jsonList.length,
-            ),
-          ),
-        ],
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                          child: TextField(
+                            controller: _searchController,
+                            decoration: InputDecoration(
+                              hintText: 'Search Anime',
+                              border: InputBorder.none,
+                            ),
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.search),
+                        onPressed: () {
+                          _searchAnime(_searchController.text);
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Expanded(
+                child: GridView.builder(
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  physics: const BouncingScrollPhysics(),
+                  controller: _scrollController,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 7.0,
+                    mainAxisSpacing: 7.0,
+                  ),
+                  itemBuilder: (BuildContext context, int index) {
+                    final image = jsonList[index]['image'] as String?;
+                    final title = jsonList[index]['title'] as String?;
+                    final description = jsonList[index]['description'] as String?;
+                    final id = jsonList[index]['id'] as String?;
+
+                    return GestureDetector(
+                      onTap: () {
+                        _handleAnimeTap(id);
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.0),
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 2.0,
+                              blurRadius: 10.0,
+                              offset: const Offset(0.0, 3.0),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            ClipRRect(
+                              borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(10.0),
+                                topRight: Radius.circular(10.0),
+                              ),
+                              child: Image.network(
+                                image ?? '',
+                                fit: BoxFit.cover,
+                                height: 140,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(5.0),
+                              child: Text(
+                                title ?? '',
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                              child: Text(
+                                description ?? '',
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                  itemCount: jsonList.length,
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -209,7 +216,8 @@ Widget build(BuildContext context) {
       Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => AnimeDetailsScreen(animeId: id)),
+          builder: (context) => AnimeDetailsScreen(animeId: id),
+        ),
       );
     }
   }
@@ -252,6 +260,8 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+
     return Scaffold(
       appBar: null,
       body: FutureBuilder<Map<String, dynamic>>(
