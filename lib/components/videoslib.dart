@@ -1,4 +1,5 @@
 // ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 
@@ -13,27 +14,20 @@ class _AnimeLibraryState extends State<AnimeLibrary> {
   List<dynamic> jsonList = [];
   int currentPage = 1;
   bool isLoading = false;
-  ScrollController scrollController = ScrollController();
+  ScrollController _scrollController = ScrollController();
+  TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     getData();
 
-    // Add a scroll listener to the scrollController
-    scrollController.addListener(scrollListener);
-  }
-
-  @override
-  void dispose() {
-    // Dispose the scrollController to prevent memory leaks
-    scrollController.dispose();
-    super.dispose();
+    _scrollController.addListener(_scrollListener);
   }
 
   void getData() async {
     try {
-      if (isLoading) return; // Prevent multiple requests while loading
+      if (isLoading) return;
 
       setState(() {
         isLoading = true;
@@ -59,42 +53,27 @@ class _AnimeLibraryState extends State<AnimeLibrary> {
     }
   }
 
-  void showDetails(int index) async {
-    final id = jsonList[index]['id'] as String;
-    final url = 'https://api.consumet.org/anime/gogoanime/info/$id';
-
-    try {
-      var dio = Dio();
-      var response = await dio.get(url);
-
-      if (response.statusCode == 200) {
-        final data = response.data;
-
-        // ignore: use_build_context_synchronously
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) =>
-                AnimeDetailScreen(animeId: jsonList[index]['id']),
-          ),
-        );
-      } else {
-        // ignore: avoid_print
-        print(response.statusCode);
-      }
-    } catch (e) {
-      // ignore: avoid_print
-      print(e);
+  void _scrollListener() {
+    if (_scrollController.offset >=
+            _scrollController.position.maxScrollExtent &&
+        !_scrollController.position.outOfRange) {
+      getData();
     }
   }
 
-  void scrollListener() {
-    if (scrollController.position.pixels ==
-            scrollController.position.maxScrollExtent &&
-        !isLoading) {
-      // Reached the end of the list, load more data
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _searchAnime(String query) {
+    setState(() {
+      jsonList.clear();
+      currentPage = 1;
       getData();
-    }
+    });
   }
 
   @override
@@ -102,62 +81,88 @@ class _AnimeLibraryState extends State<AnimeLibrary> {
     return Scaffold(
       body: Column(
         children: [
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                hintText: 'Search Anime',
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.search),
+                  onPressed: () {
+                    _searchAnime(_searchController.text);
+                  },
+                ),
+              ),
+            ),
+          ),
           Expanded(
-            child: ListView.builder(
-              controller:
-                  scrollController, // Assign the scrollController to the ListView.builder
-              shrinkWrap: true,
-              physics: const BouncingScrollPhysics(),
+            child: GridView.builder(
+              controller: _scrollController,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 10.0,
+                mainAxisSpacing: 10.0,
+              ),
               itemBuilder: (BuildContext context, int index) {
                 final image = jsonList[index]['image'] as String?;
                 final title = jsonList[index]['title'] as String?;
                 final description = jsonList[index]['description'] as String?;
+                final id = jsonList[index]['id'] as String?;
 
                 return GestureDetector(
-                  onTap: () => showDetails(index),
-                  child: Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: image != null
-                                ? Image.network(
-                                    image,
-                                    fit: BoxFit.cover,
-                                    width: 70,
-                                    height: 100,
-                                  )
-                                : Container(),
+                  onTap: () {
+                    _handleAnimeTap(id);
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 2.0,
+                          blurRadius: 5.0,
+                          offset: const Offset(0.0, 3.0),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        ClipRRect(
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(10.0),
+                            topRight: Radius.circular(10.0),
                           ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  title ?? '',
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  description ?? '',
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                              ],
+                          child: Image.network(
+                            image ?? '',
+                            fit: BoxFit.cover,
+                            height: 150,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            title ?? '',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Text(
+                            description ?? '',
+                            style: const TextStyle(
+                              fontSize: 12,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 );
@@ -169,194 +174,157 @@ class _AnimeLibraryState extends State<AnimeLibrary> {
       ),
     );
   }
+
+  void _handleAnimeTap(String? id) {
+    if (id != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => AnimeDetailsScreen(animeId: id)),
+      );
+    }
+  }
 }
 
-class AnimeDetailScreen extends StatefulWidget {
+class AnimeDetailsScreen extends StatefulWidget {
   final String animeId;
 
-  const AnimeDetailScreen({Key? key, required this.animeId}) : super(key: key);
+  const AnimeDetailsScreen({Key? key, required this.animeId}) : super(key: key);
 
   @override
-  _AnimeDetailScreenState createState() => _AnimeDetailScreenState();
+  _AnimeDetailsScreenState createState() => _AnimeDetailsScreenState();
 }
 
-class _AnimeDetailScreenState extends State<AnimeDetailScreen> {
-  late dynamic animeData;
-  List<dynamic> episodes = [];
-  bool isLoading = true;
+class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
+  late Future<Map<String, dynamic>> animeDetailsFuture;
 
   @override
   void initState() {
     super.initState();
-    fetchData();
+    animeDetailsFuture = fetchAnimeDetails();
   }
 
-  void fetchData() async {
+  Future<Map<String, dynamic>> fetchAnimeDetails() async {
     try {
       var dio = Dio();
-      var url =
-          "https://api.consumet.org/anime/gogoanime/info/${widget.animeId}";
-      var response = await dio.get(url);
+      var response = await dio.get(
+        'https://api.consumet.org/anime/gogoanime/info/${widget.animeId}',
+      );
 
       if (response.statusCode == 200) {
-        setState(() {
-          animeData = response.data;
-          episodes = animeData['episodes'] ?? [];
-          isLoading = false;
-        });
+        return response.data;
       } else {
-        print(
-            'Failed to fetch anime details. Status code: ${response.statusCode}');
+        throw Exception('Failed to fetch anime details');
       }
     } catch (e) {
-      print('Error while fetching anime details: $e');
+      throw Exception('Failed to fetch anime details: $e');
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 49, 50, 53),
-      body: isLoading
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
-          : Column(
-              children: [
-                Stack(
-                  alignment: Alignment.bottomCenter,
-                  children: [
-                    Image.network(
-                      animeData['image'] ?? '',
-                      fit: BoxFit.fill,
-                      width: MediaQuery.of(context).size.width,
-                      height: 400,
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Colors.transparent,
-                            Colors.black.withOpacity(0.8),
-                          ],
-                        ),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Text(
-                              animeData['title'] ?? '',
-                              style: const TextStyle(
-                                fontSize: 30,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                            const SizedBox(height: 3),
-                            Positioned(
-                              bottom: 16,
-                              right: 16,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 4, horizontal: 8),
-                                decoration: BoxDecoration(
-                                  color: Colors.red,
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                child: Text(
-                                  (animeData['genres'] as List<dynamic>)
-                                      .join(", "),
-                                  style: const TextStyle(
-                                      fontSize: 16, color: Colors.white),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 3),
-                            Text(
-                              animeData['description'] ?? '',
-                              maxLines: 3,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                Expanded(
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    physics: const BouncingScrollPhysics(),
-                    itemCount: episodes.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      final episode = episodes[index];
+      appBar: null,
+      body: FutureBuilder<Map<String, dynamic>>(
+        future: animeDetailsFuture,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            final animeDetails = snapshot.data!;
+            final description = animeDetails['description'];
 
-                      return Container(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 8.0,
-                          horizontal: 16.0,
-                        ),
+            return SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Stack(
+                    children: [
+                      Container(
+                        height: 500,
                         decoration: BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(
-                              color: Colors.grey.withOpacity(0.4),
-                              width: 1.0,
-                            ),
+                          image: DecorationImage(
+                            image: NetworkImage(animeDetails['image']),
+                            fit: BoxFit.cover,
                           ),
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Episode ${episode['number'] ?? ''}',
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color.fromARGB(255, 255, 255, 255),
-                                  ),
-                                ),
-                                Text(
-                                  episode['title'] ?? '',
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            ElevatedButton(
-                              onPressed: () {
-                                // Add your desired functionality here
-                              },
-                              // ignore: sort_child_properties_last
-                              child: const Text('Watch'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    const Color.fromARGB(255, 160, 27, 27),
-                                textStyle: const TextStyle(
-                                  fontSize: 14,
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        child: Container(
+                          padding: const EdgeInsets.all(16),
+                          color: Colors.black.withOpacity(0.6),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                animeDetails['title'],
+                                style: const TextStyle(
+                                  fontSize: 24,
                                   fontWeight: FontWeight.bold,
+                                  color: Colors.white,
                                 ),
                               ),
-                            ),
-                          ],
+                              const SizedBox(height: 8),
+                              Text(
+                                description.length > 150
+                                    ? '${description.substring(0, 150)}...'
+                                    : description,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      );
-                    },
+                      ),
+                    ],
                   ),
-                ),
-              ],
-            ),
+                  const SizedBox(height: 16),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: Text(
+                      'Episodes:',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    height: 300, // Specify the height of the episodes container
+                    child: ListView.separated(
+                      separatorBuilder: (context, index) => Divider(
+                        color: Colors.grey[300],
+                        thickness: 1,
+                        height: 0,
+                      ),
+                      shrinkWrap: true,
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      itemCount: animeDetails['episodes'].length,
+                      itemBuilder: (context, index) {
+                        final episode = animeDetails['episodes'][index];
+                        return ListTile(
+                          title: Text('Episode ${episode['number']}'),
+                          trailing: const Icon(Icons.play_circle_outline),
+                          onTap: () {
+                            // Handle episode tap
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            );
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else {
+            return const Center(child: CircularProgressIndicator());
+          }
+        },
+      ),
     );
   }
 }
