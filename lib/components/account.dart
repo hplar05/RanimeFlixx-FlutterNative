@@ -120,7 +120,7 @@ class _ProfilepageState extends State<Profilepage> {
   Widget buildCoverImage() => Container(
         color: Colors.grey,
         child: Image.asset(
-          'lib/images/loadimg.png',
+          'lib/images/loadimg.jpg',
           width: double.infinity,
           height: coverHeight,
           fit: BoxFit.cover,
@@ -130,7 +130,7 @@ class _ProfilepageState extends State<Profilepage> {
   Widget buildProfileImage() => CircleAvatar(
         radius: profileHeight / 2,
         backgroundColor: Colors.grey.shade800,
-        backgroundImage: const AssetImage("lib/images/profile2.jpg"),
+        backgroundImage: const AssetImage("lib/images/profile.jpg"),
       );
 
   Widget buildContent() => Column(

@@ -26,8 +26,7 @@ class _NavpagesState extends State<Navpages> {
 
   final List<Widget> _screens = [
     const Homescreen(),
-     AnimeLibrary(),
-    const SearchVideo(),
+     const AnimeLibrary(),
     const Profilepage(),
   ];
 
@@ -78,6 +77,7 @@ class _NavpagesState extends State<Navpages> {
               ),
               label: '',
             ),
+  
             BottomNavigationBarItem(
               icon: Container(
                 padding: const EdgeInsets.symmetric(
@@ -86,20 +86,6 @@ class _NavpagesState extends State<Navpages> {
                 ),
                 decoration: BoxDecoration(
                   color: _currentIndex == 2 ? Colors.blue : Colors.transparent,
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-                child: const Icon(Icons.search),
-              ),
-              label: '',
-            ),
-            BottomNavigationBarItem(
-              icon: Container(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 6.0,
-                  horizontal: 16.0,
-                ),
-                decoration: BoxDecoration(
-                  color: _currentIndex == 3 ? Colors.blue : Colors.transparent,
                   borderRadius: BorderRadius.circular(20.0),
                 ),
                 child: const Icon(Icons.person),

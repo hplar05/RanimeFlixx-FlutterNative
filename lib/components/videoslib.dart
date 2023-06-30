@@ -2,6 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/services.dart';
+
 
 class AnimeLibrary extends StatefulWidget {
   const AnimeLibrary({Key? key}) : super(key: key);
@@ -80,6 +82,7 @@ class _AnimeLibraryState extends State<AnimeLibrary> {
 
 @override
 Widget build(BuildContext context) {
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
   return Scaffold(
     body: Column(
       children: [
@@ -164,7 +167,7 @@ Widget build(BuildContext context) {
                           child: Image.network(
                             image ?? '',
                             fit: BoxFit.cover,
-                            height: 160,
+                            height: 140,
                           ),
                         ),
                         Padding(
@@ -172,7 +175,7 @@ Widget build(BuildContext context) {
                           child: Text(
                             title ?? '',
                             style: const TextStyle(
-                              fontSize: 10,
+                              fontSize: 13,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -318,6 +321,7 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
                       ),
                     ),
                   ),
+                  // ignore: sized_box_for_whitespace
                   Container(
                     height: 300, // Specify the height of the episodes container
                     child: ListView.separated(
