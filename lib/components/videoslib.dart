@@ -268,7 +268,7 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
                   Stack(
                     children: [
                       Container(
-                        height: 500,
+                        height: 440,
                         decoration: BoxDecoration(
                           image: DecorationImage(
                             image: NetworkImage(animeDetails['image']),
@@ -323,7 +323,7 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
                   ),
                   // ignore: sized_box_for_whitespace
                   Container(
-                    height: 300, // Specify the height of the episodes container
+                    height: 400, // Specify the height of the episodes container
                     child: ListView.separated(
                       separatorBuilder: (context, index) => Divider(
                         color: Colors.grey[300],
