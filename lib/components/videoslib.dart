@@ -302,18 +302,18 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
                               Text(
                                 animeDetails['title'],
                                 style: const TextStyle(
-                                  fontSize: 19,
+                                  fontSize: 25,
                                   fontWeight: FontWeight.bold,
                                   color: Color.fromARGB(255, 207, 203, 203),
                                 ),
                               ),
-                              const SizedBox(height: 8),
+                              const SizedBox(height: 15),
                               Text(
                                 description.length > 150
                                     ? '${description.substring(0, 150)}...'
                                     : description,
                                 style: const TextStyle(
-                                  fontSize: 13,
+                                  fontSize: 15,
                                   color: Color.fromARGB(255, 196, 193, 193),
                                 ),
                               ),
