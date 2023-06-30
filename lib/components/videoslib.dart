@@ -84,6 +84,7 @@ class _AnimeLibraryState extends State<AnimeLibrary> {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
 
     return Scaffold(
+      backgroundColor: Colors.grey,
       body: Builder(
         builder: (BuildContext context) {
           return Column(
@@ -128,17 +129,18 @@ class _AnimeLibraryState extends State<AnimeLibrary> {
                 ),
               ),
               Expanded(
-                child: GridView.builder(
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  physics: const BouncingScrollPhysics(),
+                child: ListView.builder(
                   controller: _scrollController,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 7.0,
-                    mainAxisSpacing: 7.0,
-                  ),
+                  itemCount: jsonList.length + 1,
                   itemBuilder: (BuildContext context, int index) {
+                    if (index == jsonList.length) {
+                      if (isLoading) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else {
+                        return Container();
+                      }
+                    }
+
                     final image = jsonList[index]['image'] as String?;
                     final title = jsonList[index]['title'] as String?;
                     final description = jsonList[index]['description'] as String?;
@@ -149,6 +151,7 @@ class _AnimeLibraryState extends State<AnimeLibrary> {
                         _handleAnimeTap(id);
                       },
                       child: Container(
+                        margin: const EdgeInsets.symmetric(vertical: 7.0, horizontal: 10.0),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10.0),
                           color: Colors.white,
@@ -172,7 +175,7 @@ class _AnimeLibraryState extends State<AnimeLibrary> {
                               child: Image.network(
                                 image ?? '',
                                 fit: BoxFit.cover,
-                                height: 140,
+                                height: 200,
                               ),
                             ),
                             Padding(
@@ -180,7 +183,7 @@ class _AnimeLibraryState extends State<AnimeLibrary> {
                               child: Text(
                                 title ?? '',
                                 style: const TextStyle(
-                                  fontSize: 13,
+                                  fontSize: 15,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -201,7 +204,6 @@ class _AnimeLibraryState extends State<AnimeLibrary> {
                       ),
                     );
                   },
-                  itemCount: jsonList.length,
                 ),
               ),
             ],
@@ -222,6 +224,7 @@ class _AnimeLibraryState extends State<AnimeLibrary> {
     }
   }
 }
+
 
 class AnimeDetailsScreen extends StatefulWidget {
   final String animeId;
@@ -278,7 +281,7 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
                   Stack(
                     children: [
                       Container(
-                        height: 440,
+                        height: 400,
                         decoration: BoxDecoration(
                           image: DecorationImage(
                             image: NetworkImage(animeDetails['image']),
@@ -299,9 +302,9 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
                               Text(
                                 animeDetails['title'],
                                 style: const TextStyle(
-                                  fontSize: 24,
+                                  fontSize: 19,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.white,
+                                  color: Color.fromARGB(255, 207, 203, 203),
                                 ),
                               ),
                               const SizedBox(height: 8),
@@ -310,8 +313,8 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
                                     ? '${description.substring(0, 150)}...'
                                     : description,
                                 style: const TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.white,
+                                  fontSize: 13,
+                                  color: Color.fromARGB(255, 196, 193, 193),
                                 ),
                               ),
                             ],
