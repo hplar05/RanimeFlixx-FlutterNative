@@ -1,4 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api
+// ignore_for_file: library_private_types_in_public_api, prefer_final_fields, prefer_const_constructors
 
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
@@ -46,9 +46,11 @@ class _AnimeLibraryState extends State<AnimeLibrary> {
           isLoading = false;
         });
       } else {
+        // ignore: avoid_print
         print(response.statusCode);
       }
     } catch (e) {
+      // ignore: avoid_print
       print(e);
     }
   }
@@ -76,33 +78,57 @@ class _AnimeLibraryState extends State<AnimeLibrary> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: 'Search Anime',
-                suffixIcon: IconButton(
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    body: Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10.0),
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 2.0,
+                  blurRadius: 10.0,
+                  offset: const Offset(0.0, 3.0),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    child: TextField(
+                      controller: _searchController,
+                      decoration: InputDecoration(
+                        hintText: 'Search Anime',
+                        border: InputBorder.none,
+                      ),
+                    ),
+                  ),
+                ),
+                IconButton(
                   icon: const Icon(Icons.search),
                   onPressed: () {
                     _searchAnime(_searchController.text);
                   },
                 ),
-              ),
+              ],
             ),
           ),
+        ),
           Expanded(
             child: GridView.builder(
               controller: _scrollController,
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
-                crossAxisSpacing: 10.0,
-                mainAxisSpacing: 10.0,
+                crossAxisSpacing: 7.0,
+                mainAxisSpacing: 7.0,
               ),
               itemBuilder: (BuildContext context, int index) {
                 final image = jsonList[index]['image'] as String?;
@@ -122,7 +148,7 @@ class _AnimeLibraryState extends State<AnimeLibrary> {
                         BoxShadow(
                           color: Colors.grey.withOpacity(0.5),
                           spreadRadius: 2.0,
-                          blurRadius: 5.0,
+                          blurRadius: 10.0,
                           offset: const Offset(0.0, 3.0),
                         ),
                       ],
@@ -138,21 +164,21 @@ class _AnimeLibraryState extends State<AnimeLibrary> {
                           child: Image.network(
                             image ?? '',
                             fit: BoxFit.cover,
-                            height: 150,
+                            height: 160,
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(5.0),
                           child: Text(
                             title ?? '',
                             style: const TextStyle(
-                              fontSize: 16,
+                              fontSize: 10,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
                           child: Text(
                             description ?? '',
                             style: const TextStyle(
