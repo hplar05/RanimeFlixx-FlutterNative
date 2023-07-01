@@ -85,7 +85,7 @@ class _ProfilepageState extends State<Profilepage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 228, 228, 228),
+      backgroundColor: Color.fromARGB(255, 255, 255, 255),
       body: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[

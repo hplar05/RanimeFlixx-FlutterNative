@@ -79,139 +79,101 @@ class _AnimeLibraryState extends State<AnimeLibrary> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+@override
+Widget build(BuildContext context) {
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
 
-    return Scaffold(
-      backgroundColor: Colors.grey,
-      body: Builder(
-        builder: (BuildContext context) {
-          return Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10.0),
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: 2.0,
-                        blurRadius: 10.0,
-                        offset: const Offset(0.0, 3.0),
+  return Scaffold(
+    backgroundColor: Colors.grey,
+    body: Builder(
+      builder: (BuildContext context) {
+        return Column(
+          children: [
+            Expanded(
+              child: ListView.builder(
+                controller: _scrollController,
+                itemCount: jsonList.length + 1,
+                itemBuilder: (BuildContext context, int index) {
+                  if (index == jsonList.length) {
+                    if (isLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else {
+                      return Container();
+                    }
+                  }
+
+                  final image = jsonList[index]['image'] as String?;
+                  final title = jsonList[index]['title'] as String?;
+                  final description = jsonList[index]['description'] as String?;
+                  final id = jsonList[index]['id'] as String?;
+
+                  return GestureDetector(
+                    onTap: () {
+                      _handleAnimeTap(id);
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(vertical: 7.0, horizontal: 10.0),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10.0),
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 2.0,
+                            blurRadius: 10.0,
+                            offset: const Offset(0.0, 3.0),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                          child: TextField(
-                            controller: _searchController,
-                            decoration: InputDecoration(
-                              hintText: 'Search Anime',
-                              border: InputBorder.none,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          ClipRRect(
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(10.0),
+                              topRight: Radius.circular(10.0),
+                            ),
+                            child: Image.network(
+                              image ?? '',
+                              fit: BoxFit.cover,
+                              height: 200,
                             ),
                           ),
-                        ),
+                          Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: Text(
+                              title ?? '',
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                            child: Text(
+                              description ?? '',
+                              style: const TextStyle(
+                                fontSize: 12,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
                       ),
-                      IconButton(
-                        icon: const Icon(Icons.search),
-                        onPressed: () {
-                          _searchAnime(_searchController.text);
-                        },
-                      ),
-                    ],
-                  ),
-                ),
+                    ),
+                  );
+                },
               ),
-              Expanded(
-                child: ListView.builder(
-                  controller: _scrollController,
-                  itemCount: jsonList.length + 1,
-                  itemBuilder: (BuildContext context, int index) {
-                    if (index == jsonList.length) {
-                      if (isLoading) {
-                        return const Center(child: CircularProgressIndicator());
-                      } else {
-                        return Container();
-                      }
-                    }
+            ),
+          ],
+        );
+      },
+    ),
+  );
+}
 
-                    final image = jsonList[index]['image'] as String?;
-                    final title = jsonList[index]['title'] as String?;
-                    final description = jsonList[index]['description'] as String?;
-                    final id = jsonList[index]['id'] as String?;
-
-                    return GestureDetector(
-                      onTap: () {
-                        _handleAnimeTap(id);
-                      },
-                      child: Container(
-                        margin: const EdgeInsets.symmetric(vertical: 7.0, horizontal: 10.0),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.0),
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 2.0,
-                              blurRadius: 10.0,
-                              offset: const Offset(0.0, 3.0),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            ClipRRect(
-                              borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(10.0),
-                                topRight: Radius.circular(10.0),
-                              ),
-                              child: Image.network(
-                                image ?? '',
-                                fit: BoxFit.cover,
-                                height: 200,
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(5.0),
-                              child: Text(
-                                title ?? '',
-                                style: const TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                              child: Text(
-                                description ?? '',
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                ),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
-          );
-        },
-      ),
-    );
-  }
 
   void _handleAnimeTap(String? id) {
     if (id != null) {
