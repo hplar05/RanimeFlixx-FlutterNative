@@ -1,8 +1,10 @@
-// ignore_for_file: library_private_types_in_public_api, prefer_final_fields, prefer_const_constructors
+// ignore_for_file: library_private_types_in_public_api, prefer_final_fields, prefer_const_constructors, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
+import 'package:dio/dio.dart';
+import 'package:chewie/chewie.dart';
+import 'package:video_player/video_player.dart';
 
 class AnimeLibrary extends StatefulWidget {
   const AnimeLibrary({Key? key}) : super(key: key);
@@ -223,6 +225,53 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
     }
   }
 
+  Future<List<Map<String, dynamic>>> fetchEpisodeServers(String episodeId) async {
+    try {
+      var dio = Dio();
+      print(episodeId);
+      var response = await dio.get(
+        'https://api.consumet.org/anime/gogoanime/servers/$episodeId'
+      );
+
+      if (response.statusCode == 200) {
+        return List<Map<String, dynamic>>.from(response.data);
+      } else {
+        throw Exception('Failed to fetch episode servers');
+      }
+    } catch (e) {
+      throw Exception('Failed to fetch episode servers: $e');
+    }
+  }
+
+  Future<void> handleEpisodeTap(String episodeId) async {
+    try {
+      final servers = await fetchEpisodeServers(episodeId);
+      showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Container(
+            child: ListView.builder(
+              itemCount: servers.length,
+              itemBuilder: (context, index) {
+                final server = servers[index];
+                return ListTile(
+                  title: Text(server['name']),
+                  onTap: () {
+                    // Handle server selection and episode ID
+                    // You can do something with the selected server and episode ID here
+                    Navigator.pop(context);
+                  },
+                );
+              },
+            ),
+          );
+        },
+      );
+    } catch (e) {
+      // Handle error
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
@@ -296,9 +345,8 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
                       ),
                     ),
                   ),
-                  // ignore: sized_box_for_whitespace
                   Container(
-                    height: 400, // Specify the height of the episodes container
+                    height: 400,
                     child: ListView.separated(
                       separatorBuilder: (context, index) => Divider(
                         color: Colors.grey[300],
@@ -310,12 +358,11 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
                       itemCount: animeDetails['episodes'].length,
                       itemBuilder: (context, index) {
                         final episode = animeDetails['episodes'][index];
+                        final episodeId = episode['id']; // Assuming the episode ID is stored in the 'id' field
                         return ListTile(
                           title: Text('Episode ${episode['number']}'),
                           trailing: const Icon(Icons.play_circle_outline),
-                          onTap: () {
-                            // Handle episode tap
-                          },
+                          onTap: () => handleEpisodeTap(episodeId), // Pass the episode ID
                         );
                       },
                     ),
@@ -333,3 +380,4 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
     );
   }
 }
+
