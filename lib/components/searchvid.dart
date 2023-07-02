@@ -1,9 +1,7 @@
-// ignore_for_file: library_private_types_in_public_api, prefer_final_fields
-
+import 'package:anime_app/components/videoslib.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
-import 'package:anime_app/components/videoslib.dart';
 
 class SearchVideo extends StatefulWidget {
   const SearchVideo({Key? key}) : super(key: key);
@@ -25,6 +23,10 @@ class _SearchVideoState extends State<SearchVideo> {
     getData();
 
     _scrollController.addListener(_scrollListener);
+
+    _searchController.addListener(() {
+      _searchAnime(_searchController.text);
+    });
   }
 
   void getData() async {
@@ -48,11 +50,9 @@ class _SearchVideoState extends State<SearchVideo> {
           isLoading = false;
         });
       } else {
-        // ignore: avoid_print
         print(response.statusCode);
       }
     } catch (e) {
-      // ignore: avoid_print
       print(e);
     }
   }
@@ -72,12 +72,38 @@ class _SearchVideoState extends State<SearchVideo> {
     super.dispose();
   }
 
-  void _searchAnime(String query) {
+  void _searchAnime(String query) async {
     setState(() {
       jsonList.clear();
       currentPage = 1;
-      getData();
+      isLoading = true;
     });
+
+    try {
+      var dio = Dio();
+      var response = await dio.get(
+        'https://api.consumet.org/anime/gogoanime/$query',
+        queryParameters: {'page': currentPage},
+      );
+
+      if (response.statusCode == 200) {
+        setState(() {
+          jsonList.addAll(response.data['results'] as List<dynamic>);
+          currentPage++;
+          isLoading = false;
+        });
+      } else {
+        print(response.statusCode);
+        setState(() {
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print(e);
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   @override
@@ -85,7 +111,7 @@ class _SearchVideoState extends State<SearchVideo> {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
 
     return Scaffold(
-      backgroundColor: Colors.grey,
+      backgroundColor: const Color.fromARGB(255, 0, 0, 0),
       body: Builder(
         builder: (BuildContext context) {
           return Column(
@@ -112,8 +138,7 @@ class _SearchVideoState extends State<SearchVideo> {
                           padding: const EdgeInsets.symmetric(horizontal: 10.0),
                           child: TextField(
                             controller: _searchController,
-                            // ignore: prefer_const_constructors
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               hintText: 'Search Anime',
                               border: InputBorder.none,
                             ),
@@ -155,8 +180,8 @@ class _SearchVideoState extends State<SearchVideo> {
                       child: Container(
                         margin: const EdgeInsets.symmetric(vertical: 3.0, horizontal: 8.0),
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5.0),
-                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10.0),
+                          color: Colors.grey,
                           boxShadow: [
                             BoxShadow(
                               color: Colors.grey.withOpacity(0.5),
@@ -173,8 +198,7 @@ class _SearchVideoState extends State<SearchVideo> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 ClipRRect(
-                                  borderRadius: const BorderRadius.only(                              
-                                  ),
+                                  borderRadius: BorderRadius.circular(10.0), // Add border radius
                                   child: Image.network(
                                     image ?? '',
                                     fit: BoxFit.cover,

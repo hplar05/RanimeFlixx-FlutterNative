@@ -1,11 +1,9 @@
-// ignore_for_file: library_private_types_in_public_api
-
 import 'dart:async';
 import 'package:anime_app/components/navpage.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
+  const SplashScreen({Key? key});
 
   @override
   _SplashScreenState createState() => _SplashScreenState();
@@ -16,7 +14,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     Timer(
-      const Duration(seconds: 8),
+      const Duration(seconds: 10),
       () => Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const Navpages()),
@@ -26,9 +24,9 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: const Color.fromARGB(255, 58, 59, 60),
-      child: Stack(
+    return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 58, 59, 60),
+      body: Stack(
         alignment: Alignment.center,
         children: [
           Image.asset(
@@ -38,7 +36,22 @@ class _SplashScreenState extends State<SplashScreen> {
             width: double.infinity,
           ),
           const Positioned(
-            bottom: 50, // Adjust the position as needed
+            bottom: 5, // Adjust the position as needed
+            left: 0,
+            right: 0,
+            child: Center(
+              child: Text(
+                'Created by Ralph Saladino using Flutter \n    and Consumet Documentation API',
+                style: TextStyle(
+                  color: Color.fromARGB(162, 255, 255, 255),
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+          const Positioned(
+            bottom: 60,
             child: CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
             ),

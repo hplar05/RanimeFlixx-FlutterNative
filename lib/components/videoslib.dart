@@ -81,101 +81,103 @@ class _AnimeLibraryState extends State<AnimeLibrary> {
     });
   }
 
-@override
-Widget build(BuildContext context) {
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+  @override
+  Widget build(BuildContext context) {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
 
-  return Scaffold(
-    backgroundColor: Colors.grey,
-    body: Builder(
-      builder: (BuildContext context) {
-        return Column(
-          children: [
-            Expanded(
-              child: ListView.builder(
-                controller: _scrollController,
-                itemCount: jsonList.length + 1,
-                itemBuilder: (BuildContext context, int index) {
-                  if (index == jsonList.length) {
-                    if (isLoading) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else {
-                      return Container();
+    return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 0, 0, 0),
+      body: Builder(
+        builder: (BuildContext context) {
+          return Column(
+            children: [
+              Expanded(
+                child: ListView.builder(
+                  controller: _scrollController,
+                  itemCount: jsonList.length + 1,
+                  itemBuilder: (BuildContext context, int index) {
+                    if (index == jsonList.length) {
+                      if (isLoading) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else {
+                        return Container();
+                      }
                     }
-                  }
 
-                  final image = jsonList[index]['image'] as String?;
-                  final title = jsonList[index]['title'] as String?;
-                  final description = jsonList[index]['description'] as String?;
-                  final id = jsonList[index]['id'] as String?;
+                    final image = jsonList[index]['image'] as String?;
+                    final title = jsonList[index]['title'] as String?;
+                    final description =
+                        jsonList[index]['description'] as String?;
+                    final id = jsonList[index]['id'] as String?;
 
-                  return GestureDetector(
-                    onTap: () {
-                      _handleAnimeTap(id);
-                    },
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(vertical: 7.0, horizontal: 10.0),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10.0),
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.5),
-                            spreadRadius: 2.0,
-                            blurRadius: 10.0,
-                            offset: const Offset(0.0, 3.0),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          ClipRRect(
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(10.0),
-                              topRight: Radius.circular(10.0),
+                    return GestureDetector(
+                      onTap: () {
+                        _handleAnimeTap(id);
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 7.0, horizontal: 10.0),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.0),
+                          color: Colors.grey,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 2.0,
+                              blurRadius: 10.0,
+                              offset: const Offset(0.0, 3.0),
                             ),
-                            child: Image.network(
-                              image ?? '',
-                              fit: BoxFit.cover,
-                              height: 200,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(5.0),
-                            child: Text(
-                              title ?? '',
-                              style: const TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            ClipRRect(
+                              borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(10.0),
+                                topRight: Radius.circular(10.0),
+                              ),
+                              child: Image.network(
+                                image ?? '',
+                                fit: BoxFit.cover,
+                                height: 200,
                               ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                            child: Text(
-                              description ?? '',
-                              style: const TextStyle(
-                                fontSize: 12,
+                            Padding(
+                              padding: const EdgeInsets.all(5.0),
+                              child: Text(
+                                title ?? '',
+                                style: const TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
                             ),
-                          ),
-                        ],
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10.0),
+                              child: Text(
+                                description ?? '',
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
-            ),
-          ],
-        );
-      },
-    ),
-  );
-}
-
+            ],
+          );
+        },
+      ),
+    );
+  }
 
   void _handleAnimeTap(String? id) {
     if (id != null) {
@@ -189,7 +191,6 @@ Widget build(BuildContext context) {
   }
 }
 
-
 class AnimeDetailsScreen extends StatefulWidget {
   final String animeId;
 
@@ -201,6 +202,9 @@ class AnimeDetailsScreen extends StatefulWidget {
 
 class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
   late Future<Map<String, dynamic>> animeDetailsFuture;
+  VideoPlayerController? _videoPlayerController;
+  ChewieController? _chewieController;
+  bool isVideoPlayerVisible = false;
 
   @override
   void initState() {
@@ -225,16 +229,18 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
     }
   }
 
-  Future<List<Map<String, dynamic>>> fetchEpisodeServers(String episodeId) async {
+  Future<List<Map<String, dynamic>>> fetchEpisodeServers(
+      String episodeId) async {
     try {
       var dio = Dio();
-      print(episodeId);
       var response = await dio.get(
-        'https://api.consumet.org/anime/gogoanime/servers/$episodeId'
+        'https://api.consumet.org/anime/gogoanime/watch/$episodeId?server=gogocdn',
       );
 
       if (response.statusCode == 200) {
-        return List<Map<String, dynamic>>.from(response.data);
+        final data = response.data as Map<String, dynamic>;
+        final sources = List<Map<String, dynamic>>.from(data['sources']);
+        return sources;
       } else {
         throw Exception('Failed to fetch episode servers');
       }
@@ -248,21 +254,72 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
       final servers = await fetchEpisodeServers(episodeId);
       showModalBottomSheet(
         context: context,
+        backgroundColor: Colors.transparent, // Make the background transparent
         builder: (context) {
           return Container(
-            child: ListView.builder(
-              itemCount: servers.length,
-              itemBuilder: (context, index) {
-                final server = servers[index];
-                return ListTile(
-                  title: Text(server['name']),
-                  onTap: () {
-                    // Handle server selection and episode ID
-                    // You can do something with the selected server and episode ID here
-                    Navigator.pop(context);
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(16.0),
+                topRight: Radius.circular(16.0),
+              ),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(vertical: 16.0),
+                  decoration: BoxDecoration(
+                    color: Color.fromARGB(
+                        255, 67, 72, 75), // Use a custom header color
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(16.0),
+                      topRight: Radius.circular(16.0),
+                    ),
+                  ),
+                  child: Center(
+                    child: Text(
+                      'Select Episode Quality',
+                      style: TextStyle(
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+                ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: servers.length,
+                  itemBuilder: (context, index) {
+                    final server = servers[index];
+                    final quality = server['quality'];
+                    final url = server['url'];
+                    return ListTile(
+                      contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
+                      title: Text(
+                        'Quality: $quality',
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                      onTap: () {
+                        Navigator.pop(context); // Close the bottom sheet
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                VideoPlayerScreen(videoUrl: url),
+                          ),
+                        );
+                      },
+                    );
                   },
-                );
-              },
+                ),
+              ],
             ),
           );
         },
@@ -270,6 +327,14 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
     } catch (e) {
       // Handle error
     }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _videoPlayerController?.dispose();
+    _chewieController?.dispose();
+    super.dispose();
   }
 
   @override
@@ -335,8 +400,8 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Text(
                       'Episodes:',
                       style: TextStyle(
@@ -347,6 +412,10 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
                   ),
                   Container(
                     height: 400,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16.0),
+                    ),
                     child: ListView.separated(
                       separatorBuilder: (context, index) => Divider(
                         color: Colors.grey[300],
@@ -358,15 +427,29 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
                       itemCount: animeDetails['episodes'].length,
                       itemBuilder: (context, index) {
                         final episode = animeDetails['episodes'][index];
-                        final episodeId = episode['id']; // Assuming the episode ID is stored in the 'id' field
+                        final episodeId = episode['id'];
                         return ListTile(
-                          title: Text('Episode ${episode['number']}'),
-                          trailing: const Icon(Icons.play_circle_outline),
-                          onTap: () => handleEpisodeTap(episodeId), // Pass the episode ID
+                          contentPadding:
+                              EdgeInsets.symmetric(horizontal: 16.0),
+                          title: Text(
+                            'Episode ${episode['number']}',
+                            style: TextStyle(
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
+                          trailing: Icon(
+                            Icons.play_circle_outline,
+                            color: const Color.fromARGB(255, 59, 60, 60),
+                          ),
+                          onTap: () => handleEpisodeTap(episodeId),
                         );
                       },
                     ),
                   ),
+                  if (_chewieController != null)
+                    Chewie(controller: _chewieController!),
                 ],
               ),
             );
@@ -381,3 +464,47 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
   }
 }
 
+class VideoPlayerScreen extends StatefulWidget {
+  final String videoUrl;
+
+  const VideoPlayerScreen({Key? key, required this.videoUrl}) : super(key: key);
+
+  @override
+  _VideoPlayerScreenState createState() => _VideoPlayerScreenState();
+}
+
+class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
+  late VideoPlayerController _videoPlayerController;
+  late ChewieController _chewieController;
+
+  @override
+  void initState() {
+    super.initState();
+    _videoPlayerController = VideoPlayerController.network(widget.videoUrl);
+    _chewieController = ChewieController(
+      videoPlayerController: _videoPlayerController,
+      autoPlay: true,
+      looping: true,
+      aspectRatio: 16 / 9, // Adjust the aspect ratio as needed for stretching
+    );
+  }
+
+  @override
+  void dispose() {
+    _videoPlayerController.dispose();
+    _chewieController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: const Color.fromARGB(255, 49, 50, 53),
+      ),
+      body: Center(
+        child: Chewie(controller: _chewieController),
+      ),
+    );
+  }
+}
