@@ -71,7 +71,7 @@ class _AnimeHomePageState extends State<AnimeHomePage> {
   Widget build(BuildContext context) {
     
     return Scaffold(
-        backgroundColor: Colors.grey, // Set the background color to grey
+        backgroundColor: const Color.fromARGB(255, 0, 0, 0), // Set the background color to grey
         body: Padding(
           padding: const EdgeInsets.all(15.0),
           child:
@@ -81,7 +81,7 @@ class _AnimeHomePageState extends State<AnimeHomePage> {
               style: TextStyle(
                   fontSize: 25,
                   fontWeight: FontWeight.w900,
-                  color: Color.fromARGB(255, 0, 0, 0)),
+                  color: Color.fromARGB(255, 255, 255, 255)),
             ),
             const SizedBox(height: 13),
             Expanded(
@@ -103,34 +103,6 @@ class _AnimeHomePageState extends State<AnimeHomePage> {
                     _currentPageIndex = index;
                   });
                 },
-              ),
-            ),
-            const SizedBox(height: 15),
-            Expanded(
-              child: ListView(
-                children: [
-                  AnimeCard(
-                    title: 'Mashle',
-                    imageUrl: 'lib/images/mashle.jpg',
-                    onTap: () {
-                      // Handle anime selection
-                    },
-                  ),
-                  AnimeCard(
-                    title: 'Demon Slayer',
-                    imageUrl: 'lib/images/demon.jpg',
-                    onTap: () {
-                      // Handle anime selection
-                    },
-                  ),
-                  AnimeCard(
-                    title: 'One Piece',
-                    imageUrl: 'lib/images/one.jpg',
-                    onTap: () {
-                      // Handle anime selection
-                    },
-                  ),
-                ],
               ),
             ),
           ]),

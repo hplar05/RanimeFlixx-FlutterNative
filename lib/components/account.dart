@@ -130,7 +130,7 @@ class _ProfilepageState extends State<Profilepage> {
   Widget buildProfileImage() => CircleAvatar(
         radius: profileHeight / 2,
         backgroundColor: Colors.grey.shade800,
-        backgroundImage: const AssetImage("lib/images/profile.jpg"),
+        backgroundImage: const AssetImage("lib/images/profile2.jpg"),
       );
 
   Widget buildContent() => Column(

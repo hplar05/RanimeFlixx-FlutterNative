@@ -1,4 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api, prefer_final_fields, prefer_const_constructors, use_build_context_synchronously
+// ignore_for_file: library_private_types_in_public_api, prefer_final_fields, prefer_const_constructors, use_build_context_synchronously, deprecated_member_use
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -49,11 +49,9 @@ class _AnimeLibraryState extends State<AnimeLibrary> {
           isLoading = false;
         });
       } else {
-        // ignore: avoid_print
         print(response.statusCode);
       }
     } catch (e) {
-      // ignore: avoid_print
       print(e);
     }
   }
@@ -83,9 +81,12 @@ class _AnimeLibraryState extends State<AnimeLibrary> {
 
   @override
   Widget build(BuildContext context) {
-    
-
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Top Airing Anime'),
+        centerTitle: true,
+          backgroundColor: Color.fromARGB(255, 0, 0, 0),
+      ),
       backgroundColor: const Color.fromARGB(255, 0, 0, 0),
       body: Builder(
         builder: (BuildContext context) {
@@ -190,6 +191,7 @@ class _AnimeLibraryState extends State<AnimeLibrary> {
     }
   }
 }
+
 
 class AnimeDetailsScreen extends StatefulWidget {
   final String animeId;
@@ -310,15 +312,17 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
                         ),
                       ),
                       onTap: () {
-                        Navigator.pop(context);
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                VideoPlayerScreen(videoUrl: url),
-                          ),
-                        );
-                      },
+  Navigator.pop(context);
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => VideoPlayerScreen(
+        videoUrl: url,
+        episodeId: episodeId, // Pass the episodeId to the VideoPlayerScreen
+      ),
+    ),
+  );
+},
                     );
                   },
                 ),
@@ -478,8 +482,13 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
 
 class VideoPlayerScreen extends StatefulWidget {
   final String videoUrl;
+  final String episodeId;
 
-  const VideoPlayerScreen({Key? key, required this.videoUrl}) : super(key: key);
+  const VideoPlayerScreen({
+    Key? key,
+    required this.videoUrl,
+    required this.episodeId,
+  }) : super(key: key);
 
   @override
   _VideoPlayerScreenState createState() => _VideoPlayerScreenState();
@@ -497,8 +506,17 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
       videoPlayerController: _videoPlayerController,
       autoPlay: true,
       looping: true,
-      aspectRatio: 16 / 9, // Adjust the aspect ratio as needed for stretching
+      aspectRatio: 16 / 9,
+      // Adjust the aspect ratio as needed for stretching
+      autoInitialize: true,
+      allowFullScreen: true,
+      fullScreenByDefault: true,
     );
+
+    // Update the AppBar title with the episode number
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      _updateAppBarTitle();
+    });
   }
 
   @override
@@ -508,14 +526,34 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
     super.dispose();
   }
 
+  void _updateAppBarTitle() {
+    if (widget.episodeId.isNotEmpty) {
+      // Extract the episode number from the episodeId and set it as the AppBar title
+      final episodeNumber = widget.episodeId.split('_').last;
+      final appBarTitle = ' $episodeNumber';
+      setState(() {
+        // Update the state variable with the episode number
+        _appBarTitle = appBarTitle;
+      });
+    }
+  }
+
+  String _appBarTitle = '';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        title: Text(
+          _appBarTitle,
+          style: TextStyle(fontSize: 11), // Adjust the font size as needed
+        ),
         backgroundColor: const Color.fromARGB(255, 49, 50, 53),
       ),
       body: Center(
-        child: Chewie(controller: _chewieController),
+        child: Chewie(
+          controller: _chewieController,
+        ),
       ),
     );
   }

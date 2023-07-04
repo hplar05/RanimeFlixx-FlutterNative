@@ -26,8 +26,8 @@ class _NavpagesState extends State<Navpages> {
 
   final List<Widget> _screens = [
     const Homescreen(),
-    const SearchVideo(),
      const AnimeLibrary(),
+       const SearchVideo(),
     const Profilepage(),
   ];
 
@@ -74,7 +74,7 @@ class _NavpagesState extends State<Navpages> {
                   color: _currentIndex == 1 ? Colors.blue : Colors.transparent,
                   borderRadius: BorderRadius.circular(20.0),
                 ),
-                child: const Icon(Icons.search),
+                child: const Icon(Icons.movie_creation_outlined),
               ),
               label: '',
             ),
@@ -88,7 +88,7 @@ class _NavpagesState extends State<Navpages> {
                   color: _currentIndex == 2 ? Colors.blue : Colors.transparent,
                   borderRadius: BorderRadius.circular(20.0),
                 ),
-                child: const Icon(Icons.movie_creation_outlined),
+                child: const Icon(Icons.search),
               ),
               label: '',
             ),
@@ -103,7 +103,7 @@ class _NavpagesState extends State<Navpages> {
                   color: _currentIndex == 3 ? Colors.blue : Colors.transparent,
                   borderRadius: BorderRadius.circular(20.0),
                 ),
-                child: const Icon(Icons.person),
+                child: const Icon(Icons.message_outlined),
               ),
               label: '',
             ),

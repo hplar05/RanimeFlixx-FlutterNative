@@ -1,5 +1,3 @@
-// ignore_for_file: library_private_types_in_public_api
-
 import 'package:anime_app/components/videoslib.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
@@ -109,142 +107,145 @@ class _SearchVideoState extends State<SearchVideo> {
 
   @override
   Widget build(BuildContext context) {
-    
-
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 0, 0, 0),
-      body: Builder(
-        builder: (BuildContext context) {
-          return Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10.0),
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: 2.0,
-                        blurRadius: 10.0,
-                        offset: const Offset(0.0, 3.0),
-                      ),
-                    ],
+      backgroundColor: Colors.black, // Set background color to black
+    appBar: PreferredSize(
+  preferredSize: Size.fromHeight(10.0),
+  child: AppBar(
+    backgroundColor: Colors.black,
+    automaticallyImplyLeading: false, // hides leading widget
+  )
+),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10.0),
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 2.0,
+                    blurRadius: 10.0,
+                    offset: const Offset(0.0, 3.0),
                   ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                          child: TextField(
-                            controller: _searchController,
-                            decoration: const InputDecoration(
-                              hintText: 'Search Anime',
-                              border: InputBorder.none,
-                            ),
-                          ),
-                        ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.search),
-                        onPressed: () {
-                          _searchAnime(_searchController.text);
-                        },
-                      ),
-                    ],
-                  ),
-                ),
+                ],
               ),
-              Expanded(
-                child: ListView.builder(
-                  controller: _scrollController,
-                  itemCount: jsonList.length + 1,
-                  itemBuilder: (BuildContext context, int index) {
-                    if (index == jsonList.length) {
-                      if (isLoading) {
-                        return const Center(child: CircularProgressIndicator());
-                      } else {
-                        return Container();
-                      }
-                    }
-
-                    final image = jsonList[index]['image'] as String?;
-                    final title = jsonList[index]['title'] as String?;
-                    final description = jsonList[index]['description'] as String?;
-                    final id = jsonList[index]['id'] as String?;
-
-                    return GestureDetector(
-                      onTap: () {
-                        _handleAnimeTap(id);
-                      },
-                      child: Container(
-                        margin: const EdgeInsets.symmetric(vertical: 3.0, horizontal: 5.0),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.0),
-                          color: Colors.grey,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 2.0,
-                              blurRadius: 10.0,
-                              offset: const Offset(0.0, 3.0),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(10.0), // Add border radius
-                                  child: Image.network(
-                                    image ?? '',
-                                    fit: BoxFit.cover,
-                                    height: 100,
-                                    width: 100,
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          title ?? '',
-                                          style: const TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 5),
-                                        Text(
-                                          description ?? '',
-                                          style: const TextStyle(
-                                            fontSize: 12,
-                                          ),
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      child: TextField(
+                        controller: _searchController,
+                        decoration: const InputDecoration(
+                          hintText: 'Search Anime',
+                          border: InputBorder.none,
                         ),
                       ),
-                    );
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.search),
+                    onPressed: () {
+                      _searchAnime(_searchController.text);
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              controller: _scrollController,
+              itemCount: jsonList.length + 1,
+              itemBuilder: (BuildContext context, int index) {
+                if (index == jsonList.length) {
+                  if (isLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else {
+                    return Container();
+                  }
+                }
+
+                final image = jsonList[index]['image'] as String?;
+                final title = jsonList[index]['title'] as String?;
+                final description = jsonList[index]['description'] as String?;
+                final id = jsonList[index]['id'] as String?;
+
+                return GestureDetector(
+                  onTap: () {
+                    _handleAnimeTap(id);
                   },
-                ),
-              ),
-            ],
-          );
-        },
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(
+                        vertical: 3.0, horizontal: 5.0),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      color: Colors.grey,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 2.0,
+                          blurRadius: 10.0,
+                          offset: const Offset(0.0, 3.0),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(
+                                  10.0), // Add border radius
+                              child: Image.network(
+                                image ?? '',
+                                fit: BoxFit.cover,
+                                height: 100,
+                                width: 100,
+                              ),
+                            ),
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      title ?? '',
+                                      style: const TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 5),
+                                    Text(
+                                      description ?? '',
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                      ),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
