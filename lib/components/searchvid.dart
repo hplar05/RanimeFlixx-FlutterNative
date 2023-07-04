@@ -1,7 +1,8 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:anime_app/components/videoslib.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/services.dart';
 
 class SearchVideo extends StatefulWidget {
   const SearchVideo({Key? key}) : super(key: key);
@@ -108,7 +109,7 @@ class _SearchVideoState extends State<SearchVideo> {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+    
 
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 0, 0, 0),
@@ -178,7 +179,7 @@ class _SearchVideoState extends State<SearchVideo> {
                         _handleAnimeTap(id);
                       },
                       child: Container(
-                        margin: const EdgeInsets.symmetric(vertical: 3.0, horizontal: 8.0),
+                        margin: const EdgeInsets.symmetric(vertical: 3.0, horizontal: 5.0),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10.0),
                           color: Colors.grey,

@@ -69,7 +69,7 @@ class _AnimeHomePageState extends State<AnimeHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+    
     return Scaffold(
         backgroundColor: Colors.grey, // Set the background color to grey
         body: Padding(

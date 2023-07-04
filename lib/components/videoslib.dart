@@ -83,7 +83,7 @@ class _AnimeLibraryState extends State<AnimeLibrary> {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+    
 
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 0, 0, 0),
@@ -204,7 +204,7 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
   late Future<Map<String, dynamic>> animeDetailsFuture;
   VideoPlayerController? _videoPlayerController;
   ChewieController? _chewieController;
-  bool isVideoPlayerVisible = false;
+  bool isEpisodeLoading = false;
 
   @override
   void initState() {
@@ -251,10 +251,14 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
 
   Future<void> handleEpisodeTap(String episodeId) async {
     try {
+      setState(() {
+        isEpisodeLoading = true;
+      });
+
       final servers = await fetchEpisodeServers(episodeId);
       showModalBottomSheet(
         context: context,
-        backgroundColor: Colors.transparent, // Make the background transparent
+        backgroundColor: Colors.transparent,
         builder: (context) {
           return Container(
             decoration: BoxDecoration(
@@ -271,8 +275,7 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
                   width: double.infinity,
                   padding: EdgeInsets.symmetric(vertical: 16.0),
                   decoration: BoxDecoration(
-                    color: Color.fromARGB(
-                        255, 67, 72, 75), // Use a custom header color
+                    color: Color.fromARGB(255, 67, 72, 75),
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(16.0),
                       topRight: Radius.circular(16.0),
@@ -307,7 +310,7 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
                         ),
                       ),
                       onTap: () {
-                        Navigator.pop(context); // Close the bottom sheet
+                        Navigator.pop(context);
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -326,6 +329,10 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
       );
     } catch (e) {
       // Handle error
+    } finally {
+      setState(() {
+        isEpisodeLoading = false;
+      });
     }
   }
 
@@ -339,7 +346,7 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+    
 
     return Scaffold(
       appBar: null,
@@ -448,6 +455,10 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
                       },
                     ),
                   ),
+                  if (isEpisodeLoading)
+                    Center(
+                      child: CircularProgressIndicator(),
+                    ),
                   if (_chewieController != null)
                     Chewie(controller: _chewieController!),
                 ],
@@ -463,6 +474,7 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
     );
   }
 }
+
 
 class VideoPlayerScreen extends StatefulWidget {
   final String videoUrl;
