@@ -25,7 +25,7 @@ class _NavpagesState extends State<Navpages> {
   }
 
   final List<Widget> _screens = [
-    const Homescreen(),
+    const AnimeHomePage(),
      const AnimeLibrary(),
        const SearchVideo(),
     const Profilepage(),
@@ -50,10 +50,10 @@ class _NavpagesState extends State<Navpages> {
           unselectedItemColor: Colors.white,
           elevation: 0.0,
           items: [
-        BottomNavigationBarItem(
+            BottomNavigationBarItem(
               icon: Container(
                 padding: const EdgeInsets.symmetric(
-                  vertical: 6.0,
+                  vertical: 2.0, // Adjust the vertical padding here
                   horizontal: 16.0,
                 ),
                 decoration: BoxDecoration(
@@ -64,10 +64,10 @@ class _NavpagesState extends State<Navpages> {
               ),
               label: '',
             ),
-                BottomNavigationBarItem(
+            BottomNavigationBarItem(
               icon: Container(
                 padding: const EdgeInsets.symmetric(
-                  vertical: 6.0,
+                  vertical: 2.0, // Adjust the vertical padding here
                   horizontal: 16.0,
                 ),
                 decoration: BoxDecoration(
@@ -78,10 +78,10 @@ class _NavpagesState extends State<Navpages> {
               ),
               label: '',
             ),
-              BottomNavigationBarItem(
+            BottomNavigationBarItem(
               icon: Container(
                 padding: const EdgeInsets.symmetric(
-                  vertical: 6.0,
+                  vertical: 2.0, // Adjust the vertical padding here
                   horizontal: 16.0,
                 ),
                 decoration: BoxDecoration(
@@ -92,11 +92,10 @@ class _NavpagesState extends State<Navpages> {
               ),
               label: '',
             ),
-  
             BottomNavigationBarItem(
               icon: Container(
                 padding: const EdgeInsets.symmetric(
-                  vertical: 6.0,
+                  vertical: 2.0, // Adjust the vertical padding here
                   horizontal: 16.0,
                 ),
                 decoration: BoxDecoration(

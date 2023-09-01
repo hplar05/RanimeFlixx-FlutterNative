@@ -1,6 +1,7 @@
 // ignore_for_file: library_private_types_in_public_api, prefer_final_fields, prefer_const_constructors, use_build_context_synchronously, deprecated_member_use
 
 import 'package:flutter/material.dart';
+// ignore: unnecessary_import
 import 'package:flutter/services.dart';
 import 'package:dio/dio.dart';
 import 'package:chewie/chewie.dart';
@@ -231,9 +232,9 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
     }
   }
 
-  Future<List<Map<String, dynamic>>> fetchEpisodeServers(
+  Future<List<Map<String, dynamic>>> fetchEpisodeServer(
       String episodeId) async {
-    try {
+    try { 
       var dio = Dio();
       var response = await dio.get(
         'https://api.consumet.org/anime/gogoanime/watch/$episodeId?server=gogocdn',
@@ -257,7 +258,7 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
         isEpisodeLoading = true;
       });
 
-      final servers = await fetchEpisodeServers(episodeId);
+      final servers = await fetchEpisodeServer(episodeId);
       showModalBottomSheet(
         context: context,
         backgroundColor: Colors.transparent,
@@ -498,10 +499,13 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   late VideoPlayerController _videoPlayerController;
   late ChewieController _chewieController;
 
+
+
   @override
   void initState() {
     super.initState();
     _videoPlayerController = VideoPlayerController.network(widget.videoUrl);
+    print(widget.videoUrl);
     _chewieController = ChewieController(
       videoPlayerController: _videoPlayerController,
       autoPlay: true,
@@ -514,7 +518,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
     );
 
     // Update the AppBar title with the episode number
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _updateAppBarTitle();
     });
   }

@@ -5,21 +5,6 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 
 
-class Homescreen extends StatelessWidget {
-  const Homescreen({Key? key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Anime App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const AnimeHomePage(),
-    );
-  }
-}
-
 class AnimeHomePage extends StatefulWidget {
   const AnimeHomePage({Key? key}) : super(key: key);
 
