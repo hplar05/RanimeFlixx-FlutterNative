@@ -120,7 +120,7 @@ class _ProfilepageState extends State<Profilepage> {
   Widget buildCoverImage() => Container(
         color: Colors.grey,
         child: Image.asset(
-          'lib/images/loadimg.jpg',
+          'lib/images/catbg.jpg',
           width: double.infinity,
           height: coverHeight,
           fit: BoxFit.cover,
@@ -130,7 +130,7 @@ class _ProfilepageState extends State<Profilepage> {
   Widget buildProfileImage() => CircleAvatar(
         radius: profileHeight / 2,
         backgroundColor: Colors.grey.shade800,
-        backgroundImage: const AssetImage("lib/images/profile2.jpg"),
+        backgroundImage: const AssetImage("lib/images/profilef.jpg"),
       );
 
   Widget buildContent() => Column(
@@ -216,8 +216,8 @@ class _ProfilepageState extends State<Profilepage> {
             // ignore: avoid_unnecessary_containers
             child: Container(
               child: const Text(
-                "  Napagtripan lang gawin sana magusto nyo \n mga Bossing. Visit nyo nadin portfolio ko \n ehehe :) hplarplay.vercel.app Salamat <3",
-                style: TextStyle(fontSize: 21),
+                " Napagtripan lang gawin sana magusto nyo \n mga Bossing. Visit nyo nadin portfolio ko \n ehehe :) hplarplay.vercel.app Salamat <3.\n If ever na may maecounter kayong problem,\n message lang kayo thru messenger (Hp Lar \n name ko sa facebook). Ty sa suporta. :)",
+                style: TextStyle(fontSize: 20),
               ),
             ),
           ),

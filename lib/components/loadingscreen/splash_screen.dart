@@ -1,8 +1,11 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'dart:async';
 import 'package:anime_app/components/navpage.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatefulWidget {
+  // ignore: use_key_in_widget_constructors
   const SplashScreen({Key? key});
 
   @override
@@ -30,7 +33,7 @@ class _SplashScreenState extends State<SplashScreen> {
         alignment: Alignment.center,
         children: [
           Image.asset(
-            'lib/images/loadimg.jpg',
+            'lib/images/hancock.jpg',
             fit: BoxFit.cover,
             height: double.infinity,
             width: double.infinity,
@@ -43,7 +46,7 @@ class _SplashScreenState extends State<SplashScreen> {
               child: Text(
                 'Created by Ralph Saladino using Flutter \n    and Consumet Documentation API',
                 style: TextStyle(
-                  color: Color.fromARGB(162, 255, 255, 255),
+                  color: Color.fromARGB(255, 255, 255, 255),
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
                 ),

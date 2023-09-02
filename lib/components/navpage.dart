@@ -102,7 +102,7 @@ class _NavpagesState extends State<Navpages> {
                   color: _currentIndex == 3 ? Colors.blue : Colors.transparent,
                   borderRadius: BorderRadius.circular(20.0),
                 ),
-                child: const Icon(Icons.message_outlined),
+                child: const Icon(Icons.person),
               ),
               label: '',
             ),
