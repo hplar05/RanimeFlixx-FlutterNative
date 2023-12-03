@@ -1,4 +1,4 @@
-# anime_app
+# Ranimeflixx_Flutter
 
 A new Flutter project.
 
